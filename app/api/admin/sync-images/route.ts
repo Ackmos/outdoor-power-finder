@@ -32,7 +32,7 @@ export async function GET(req: Request) {
 
         const imageUrls = resources.resources.map((r: any) => r.secure_url);
       
-        console.log(`[DEBUG] Gefunden für ${station.name}: ${imageUrls.length} Bilder`);
+        console.log(`[DEBUG] Gefunden für ${station.name}: ${imageUrls.length} Bilder unter dem Pfad ${folderPath}`);
         // Datenbank-Update
         await prisma.powerstation.update({
         where: { id: station.id },
