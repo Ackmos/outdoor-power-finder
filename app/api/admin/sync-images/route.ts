@@ -21,28 +21,28 @@ export async function GET(req: Request) {
 
     for (const station of stations) {
       // Pfad zum Cloudinary-Ordner der Station
-      const folderPath = `powerstations/${station.brand.name.toLowerCase()}/${station.slug}`;
+        const brandSlug = station.brand.name.toLowerCase().replace(/\s+/g, '-');
+        const folderPath = `powerstations/${brandSlug}/${station.slug}`;
 
-      // Ressourcen aus Cloudinary abrufen
-      const resources = await cloudinary.api.resources({
-        type: 'upload',
-        prefix: folderPath,
-        max_results: 100
-      });
+        const resources = await cloudinary.search
+        .expression(`folder:${folderPath}/*`)
+        .sort_by('public_id', 'desc')
+        .max_results(100)
+        .execute();
 
-      const imageUrls = resources.resources.map((r: any) => r.secure_url);
+        const imageUrls = resources.resources.map((r: any) => r.secure_url);
       
-
-      // Datenbank-Update
-      await prisma.powerstation.update({
+        console.log(`[DEBUG] Gefunden für ${station.name}: ${imageUrls.length} Bilder`);
+        // Datenbank-Update
+        await prisma.powerstation.update({
         where: { id: station.id },
         data: {
-          images: imageUrls,
+            images: imageUrls,
 
         }
-      });
+        });
 
-      results.push({ name: station.name, count: imageUrls.length });
+        results.push({ name: station.name, count: imageUrls.length });
     }
 
     return NextResponse.json({ message: "Sync erfolgreich", details: results });
