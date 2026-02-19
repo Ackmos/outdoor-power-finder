@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Brand {
+  id            String         @id @default(cuid())
+  name          String         @unique
+  powerstations Powerstation[]
+}
+
+model Powerstation {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  name            String
+  brand           Brand    @relation(fields: [brandId], references: [id])
+  brandId         String
+  images          String[]
+  thumbnailUrl String?  // Das perfekte, transparente Vorschaubild
+  
+  // Leistung & Akku
+  capacityWh      Int      // Kapazität in Wattstunden
+  outputWatts     Int      // Dauerleistung
+  surgeWatts      Int      // Spitzenleistung
+  batteryType     String   // z.B. LiFePO4 oder Li-ion
+  cycleLife       Int      // Lebensdauer in Zyklen
+  
+  // Laden
+  chargeTimeAcMin Int      // AC Ladezeit in Min.
+  solarInputMaxW  Int      // Max. Solar-Eingang
+  upsMode         Boolean  @default(false) // Notstrom-Fähigkeit
+  
+  // Physisches & Anschlüsse
+  weightKg        Float
+  portsAc         Int
+  portsUsbC       Int
+  portsUsbA       Int
+  portsDc12v      Int
+  
+  // Marketing & SEO
+  priceApprox     Float
+  warrantyYears   Int      @default(2)
+  affiliateUrl    String?
+  analysisText    String?  @db.Text
+  pros            String?  // Semikolon-getrennte Liste
+  cons            String?  // Semikolon-getrennte Liste
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Device {
+  id            String   @id @default(cuid())
+  name          String
+  slug          String   @unique
+  avgWatts      Int      // Durchschnittsverbrauch in Watt
+  category      String   // z.B. Camping, Notstrom, Multimedia
+}
