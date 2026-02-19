@@ -1,6 +1,7 @@
 // src/app/api/admin/sync-images/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 import cloudinary from "@/lib/cloudinary"; // Deine Cloudinary-Konfiguration
 
 export async function GET(req: Request) {
@@ -45,8 +46,21 @@ export async function GET(req: Request) {
 
         results.push({ name: station.name, count: imageUrls.length });
     }
+// 1. Die Homepage aktualisieren (da dort das Grid ist)
+    revalidatePath("/"); 
 
-    return NextResponse.json({ message: "Sync erfolgreich", details: results });
+    // 2. Alle Detailseiten aktualisieren
+    // Wir nutzen den Pfad-Typ 'page', um sicherzugehen
+    revalidatePath("/powerstation-test/[slug]", "page"); 
+
+    // 3. Optional: Die Vergleichs-Seiten aktualisieren
+    revalidatePath("/vergleich/[slug]", "page");
+
+    return NextResponse.json({ 
+      message: "Sync & Revalidation erfolgreich", 
+      details: results 
+    });
+
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
