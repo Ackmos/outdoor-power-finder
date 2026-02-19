@@ -22,7 +22,8 @@ export async function GET(req: Request) {
     for (const station of stations) {
       // Pfad zum Cloudinary-Ordner der Station
         const brandSlug = station.brand.name.toLowerCase().replace(/\s+/g, '-');
-        const folderPath = `powerstations/${brandSlug}/${station.slug}`;
+        const stationname = station.name.toLowerCase().replace(/\s+/g, '-');
+        const folderPath = `powerstations/${brandSlug}/${stationname}`;
 
         const resources = await cloudinary.search
         .expression(`folder:${folderPath}/*`)
