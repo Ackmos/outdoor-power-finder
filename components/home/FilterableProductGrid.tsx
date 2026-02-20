@@ -9,10 +9,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link"; // Wichtig für Crawler
 
 export function FilterableProductGrid({ initialStations, brands }: any) {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const scrollAnchorRef = useRef<HTMLDivElement>(null);
+
 
   // Parameter aus der URL lesen
   const activeBrand = searchParams.get("brand") || "Alle";
@@ -37,16 +36,11 @@ export function FilterableProductGrid({ initialStations, brands }: any) {
     return params.toString();
   };
 
-  // Scroll-Effekt bei URL-Änderung
-  useEffect(() => {
-    if (scrollAnchorRef.current) {
-      scrollAnchorRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [searchParams]);
+
 
   return (
     <div className="space-y-10">
-      <div ref={scrollAnchorRef} className="scroll-mt-24" />
+      <div className="scroll-mt-24" />
 
       {/* FILTER BAR (Jetzt mit echten Links für SEO) */}
       <div className="flex flex-wrap gap-2 items-center justify-center bg-white p-2 rounded-2xl shadow-sm border border-stone-100">
