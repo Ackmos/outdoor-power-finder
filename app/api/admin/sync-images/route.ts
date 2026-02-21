@@ -1,4 +1,3 @@
-// src/app/api/admin/sync-images/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -20,56 +19,73 @@ export async function GET(req: Request) {
     const results = [];
 
     for (const station of stations) {
-      const brandSlug = station.brand.name.toLowerCase().replace(/\s+/g, '-');
-      const stationname = station.name.toLowerCase().replace(/\s+/g, '-');
-      
-      // Wir suchen im Hauptordner UND allen Unterordnern (/*)
-      const folderPath = `powerstations/${brandSlug}/${stationname}`;
+      try {
+        const brandSlug = station.brand?.name.toLowerCase().replace(/\s+/g, '-') || 'unknown';
+        const stationname = station.name.toLowerCase().replace(/\s+/g, '-');
+        const folderPath = `powerstations/${brandSlug}/${stationname}`;
 
-      const resources = await cloudinary.search
-        .expression(`folder:${folderPath}/*`)
-        .sort_by('public_id', 'desc')
-        .max_results(100)
-        .execute();
+        const resources = await cloudinary.search
+          .expression(`folder:${folderPath}/*`)
+          .sort_by('public_id', 'desc')
+          .max_results(100)
+          .execute();
 
-      const allImages = resources.resources;
+        const allImages = resources.resources || [];
 
-      // --- LOGIK-UPDATE: TRENNUNG VON THUMBNAIL UND GALERIE ---
-      
-      // 1. Das Thumbnail finden (Sicherheitscheck mit ? hinzugefügt)
-      const thumbResource = allImages.find((r: any) => 
-        r.folder?.endsWith('/thumbnail')
-      );
+        // --- THUMBNAIL IDENTIFIZIEREN ---
+        const thumbResource = allImages.find((r: any) => {
+          const folderPathInCloudinary = (r.folder || "").toLowerCase();
+          const publicId = (r.public_id || "").toLowerCase();
+          const isInThumbnailFolder = folderPathInCloudinary.split('/').includes("thumbnail");
+          const isPreviewFile = publicId.endsWith("-preview");
+          return isInThumbnailFolder || isPreviewFile;
+        });
 
-      // 2. Die Galerie-Bilder filtern (Sicherheitscheck mit ? hinzugefügt)
-      const galleryUrls = allImages
-        .filter((r: any) => !r.folder?.endsWith('/thumbnail'))
-        .map((r: any) => r.secure_url);
+        // --- GALERIE FILTERN ---
+        const galleryUrls = allImages
+          .filter((r: any) => {
+            const folderPathInCloudinary = (r.folder || "").toLowerCase();
+            const publicId = (r.public_id || "").toLowerCase();
+            const isThumb = folderPathInCloudinary.split('/').includes("thumbnail") || publicId.endsWith("-preview");
+            return !isThumb;
+          })
+          .map((r: any) => r.secure_url);
 
-      const thumbnailUrl = thumbResource ? thumbResource.secure_url : null;
+        const thumbnailUrl = thumbResource ? thumbResource.secure_url : null;
 
-      console.log(`[SYNC] ${station.name}: Thumbnail ${thumbnailUrl ? '✅' : '❌'} | Galerie: ${galleryUrls.length} Bilder`);
+        // --- DEBUG: VOR DEM SCHREIBEN ---
+        console.log(`[DB-PREPARE] ${station.name}:`, {
+          thumb: thumbnailUrl ? "VOHANDEN" : "FEHLT",
+          galleryCount: galleryUrls.length
+        });
 
-      // Datenbank-Update mit beiden Feldern
-      await prisma.powerstation.update({
-        where: { id: station.id },
-        data: {
-          images: galleryUrls,
-          thumbnailUrl: thumbnailUrl, // Jetzt wird auch das Thumbnail-Feld befüllt
-        }
-      });
+        // --- DATENBANK UPDATE (MIT 'SET' SYNTAX) ---
+        const updatedStation = await prisma.powerstation.update({
+          where: { id: station.id },
+          data: {
+            thumbnailUrl: thumbnailUrl,
+            images: {
+              set: galleryUrls // Explizites Überschreiben des Arrays
+            },
+          }
+        });
 
-      results.push({ 
-        name: station.name, 
-        galleryCount: galleryUrls.length, 
-        hasThumbnail: !!thumbnailUrl 
-      });
+        console.log(`[SYNC-SUCCESS] ${station.name}: DB-Update bestätigt.`);
+
+        results.push({ 
+          name: station.name, 
+          galleryCount: galleryUrls.length, 
+          hasThumbnail: !!thumbnailUrl,
+          dbUpdated: !!updatedStation
+        });
+
+      } catch (stationError: any) {
+        console.error(`[ERROR] Fehler bei Station ${station.name}:`, stationError.message);
+        results.push({ name: station.name, error: stationError.message });
+      }
     }
 
-    // Revalidation der betroffenen Seiten
-    revalidatePath("/"); 
-    revalidatePath("/powerstation-test/[slug]", "page"); 
-    revalidatePath("/vergleich/[slug]", "page");
+    revalidatePath("/", "layout");
 
     return NextResponse.json({ 
       message: "Sync erfolgreich abgeschlossen", 
@@ -77,7 +93,7 @@ export async function GET(req: Request) {
     });
 
   } catch (error: any) {
-    console.error("Sync Error:", error.message);
+    console.error("[CRITICAL] Sync abgebrochen:", error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
