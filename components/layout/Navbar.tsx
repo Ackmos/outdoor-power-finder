@@ -13,18 +13,11 @@ export function Navbar() {
         </Link>
         
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-stone-600">
-          <Link href="/kategorie/camping" className="hover:text-black transition">Camping</Link>
-          <Link href="/kategorie/notstrom" className="hover:text-black transition">Notstrom</Link>
+          <Link href="/camping" className="hover:text-black transition">Camping</Link>
+          <Link href="/notstrom" className="hover:text-black transition">Notstrom</Link>
           <Link href="/vergleich" className="hover:text-black transition">Vergleich</Link>
         </nav>
 
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon"><Search className="w-5 h-5" /></Button>
-          <Button className="hidden md:flex bg-stone-900 text-white rounded-full px-6">
-            Finder starten
-          </Button>
-          <Button variant="ghost" size="icon" className="md:hidden"><Menu className="w-6 h-6" /></Button>
-        </div>
       </div>
     </header>
   );

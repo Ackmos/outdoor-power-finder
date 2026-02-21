@@ -2,10 +2,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import cloudinary from "@/lib/cloudinary"; // Deine Cloudinary-Konfiguration
+import cloudinary from "@/lib/cloudinary";
 
 export async function GET(req: Request) {
-  // Sicherheits-Check: Nur mit korrektem Token ausführbar
   const { searchParams } = new URL(req.url);
   const token = searchParams.get("token");
 
@@ -21,47 +20,64 @@ export async function GET(req: Request) {
     const results = [];
 
     for (const station of stations) {
-      // Pfad zum Cloudinary-Ordner der Station
-        const brandSlug = station.brand.name.toLowerCase().replace(/\s+/g, '-');
-        const stationname = station.name.toLowerCase().replace(/\s+/g, '-');
-        const folderPath = `powerstations/${brandSlug}/${stationname}`;
+      const brandSlug = station.brand.name.toLowerCase().replace(/\s+/g, '-');
+      const stationname = station.name.toLowerCase().replace(/\s+/g, '-');
+      
+      // Wir suchen im Hauptordner UND allen Unterordnern (/*)
+      const folderPath = `powerstations/${brandSlug}/${stationname}`;
 
-        const resources = await cloudinary.search
+      const resources = await cloudinary.search
         .expression(`folder:${folderPath}/*`)
         .sort_by('public_id', 'desc')
         .max_results(100)
         .execute();
 
-        const imageUrls = resources.resources.map((r: any) => r.secure_url);
+      const allImages = resources.resources;
+
+      // --- LOGIK-UPDATE: TRENNUNG VON THUMBNAIL UND GALERIE ---
       
-        console.log(`[DEBUG] Gefunden für ${station.name}: ${imageUrls.length} Bilder unter dem Pfad ${folderPath}`);
-        // Datenbank-Update
-        await prisma.powerstation.update({
+      // 1. Das Thumbnail finden (liegt im Unterordner /thumbnail)
+      const thumbResource = allImages.find((r: any) => 
+        r.folder.endsWith('/thumbnail')
+      );
+
+      // 2. Die Galerie-Bilder filtern (alles, was NICHT im /thumbnail Ordner liegt)
+      const galleryUrls = allImages
+        .filter((r: any) => !r.folder.endsWith('/thumbnail'))
+        .map((r: any) => r.secure_url);
+
+      const thumbnailUrl = thumbResource ? thumbResource.secure_url : null;
+
+      console.log(`[SYNC] ${station.name}: Thumbnail ${thumbnailUrl ? '✅' : '❌'} | Galerie: ${galleryUrls.length} Bilder`);
+
+      // Datenbank-Update mit beiden Feldern
+      await prisma.powerstation.update({
         where: { id: station.id },
         data: {
-            images: imageUrls,
-
+          images: galleryUrls,
+          thumbnailUrl: thumbnailUrl, // Jetzt wird auch das Thumbnail-Feld befüllt
         }
-        });
+      });
 
-        results.push({ name: station.name, count: imageUrls.length });
+      results.push({ 
+        name: station.name, 
+        galleryCount: galleryUrls.length, 
+        hasThumbnail: !!thumbnailUrl 
+      });
     }
-// 1. Die Homepage aktualisieren (da dort das Grid ist)
+
+    // Revalidation der betroffenen Seiten
     revalidatePath("/"); 
-
-    // 2. Alle Detailseiten aktualisieren
-    // Wir nutzen den Pfad-Typ 'page', um sicherzugehen
     revalidatePath("/powerstation-test/[slug]", "page"); 
-
-    // 3. Optional: Die Vergleichs-Seiten aktualisieren
     revalidatePath("/vergleich/[slug]", "page");
 
     return NextResponse.json({ 
-      message: "Sync & Revalidation erfolgreich", 
+      message: "Sync erfolgreich abgeschlossen", 
       details: results 
     });
 
   } catch (error: any) {
+    console.error("Sync Error:", error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

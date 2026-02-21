@@ -1,81 +1,92 @@
+// src/app/api/enrich/image/route.ts
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import cloudinary from '@/lib/cloudinary';
 
 export async function POST(req: Request) {
-  // 1. Auth-Check (wie gehabt)
   const authHeader = req.headers.get('authorization');
   if (authHeader !== `Bearer ${process.env.ENRICH_TOKEN}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    const { id, imageUrls } = await req.json();
+    const { id, thumbnailUrl, galleryUrls } = await req.json();
 
-    if (!id || !Array.isArray(imageUrls)) {
-      return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
-    }
-
-    // 2. Powerstation-Daten laden (für Marken- und Modellnamen)
     const station = await prisma.powerstation.findUnique({
       where: { id },
-      include: { brand: true } // Falls du eine Relation zu einer Brand-Tabelle hast
+      include: { brand: true }
     });
 
-    if (!station) {
-      return NextResponse.json({ error: 'Station not found' }, { status: 404 });
-    }
+    if (!station) return NextResponse.json({ error: 'Station not found' }, { status: 404 });
 
-    // Pfad-Logik: powerstations/brand-name/model-name
-    // Wir säubern die Namen (kleinschreiben, Leerzeichen durch Bindestriche ersetzen)
     const brandFolder = station.brand?.name.toLowerCase().replace(/\s+/g, '-') || 'unknown';
     const modelFolder = station.name.toLowerCase().replace(/\s+/g, '-');
-    const cloudinaryFolderPath = `powerstations/${brandFolder}/${modelFolder}`;
+    
+    const mainPath = `powerstations/${brandFolder}/${modelFolder}`;
+    const thumbPath = `${mainPath}/thumbnail`;
 
-    console.log(`Starte Upload von ${imageUrls.length} Bildern nach: ${cloudinaryFolderPath}`);
+    let finalThumbnail = station.thumbnailUrl; // Behalte altes Thumbnail, falls kein neues kommt
+    const finalGallery: string[] = [];
 
-    // 3. Bilder nacheinander zu Cloudinary hochladen
-    const uploadedUrls: string[] = [];
-
-    for (const [index, url] of imageUrls.entries()) {
+    // --- 1. THUMBNAIL UPLOAD (Verbraucht 1 Credit des AI Add-ons) ---
+    // Wir prüfen zusätzlich, ob station.thumbnailUrl schon existiert, 
+    // um ein doppeltes Verarbeiten (und damit Credit-Verlust) zu vermeiden.
+    if (thumbnailUrl && !station.thumbnailUrl) {
       try {
-        const uploadResponse = await cloudinary.uploader.upload(url, {
-          folder: cloudinaryFolderPath,
-          // Eindeutige ID: z.B. bluetti-ac70-1, bluetti-ac70-2
-          public_id: `${modelFolder}-${index + 1}`,
+        const res = await cloudinary.uploader.upload(thumbnailUrl, {
+          folder: thumbPath,
+          public_id: `${modelFolder}-preview`,
           overwrite: true,
           transformation: [
-            { width: 1200, crop: "limit" }, // Qualitätssicherung
-            { fetch_format: "auto", quality: "auto" }
+            { effect: "background_removal" }, // NUR HIER wird der Credit verbraucht
+            { width: 1200, height: 1200, crop: "pad", background: "transparent" },
+            { fetch_format: "png" }
           ]
         });
-        uploadedUrls.push(uploadResponse.secure_url);
-      } catch (uploadError) {
-        console.error(`Fehler beim Upload von Bild ${index + 1}:`, uploadError);
-        // Wir machen trotzdem mit dem nächsten Bild weiter
+        finalThumbnail = res.secure_url;
+        console.log(`[AI] Hintergrund entfernt für ${station.name}`);
+      } catch (err) {
+        console.error("AI Background Removal Error:", err);
       }
     }
 
-    // 4. Datenbank mit dem neuen Array aktualisieren
-    if (uploadedUrls.length > 0) {
-      await prisma.powerstation.update({
-        where: { id },
-        data: {
-          images: uploadedUrls, // Speichert das Array der Cloudinary-URLs
-          // Optional: Setze das erste Bild als Hauptbild, falls du noch ein einzelnes Feld hast
-          //images: uploadedUrls[0] 
-        },
-      });
+    // --- 2. GALERIE UPLOAD (Kostenlos / Standard) ---
+    if (galleryUrls && galleryUrls.length > 0) {
+      for (const [index, url] of galleryUrls.entries()) {
+        try {
+          const res = await cloudinary.uploader.upload(url, {
+            folder: mainPath,
+            public_id: `${modelFolder}-gallery-${index + 1}`,
+            overwrite: true,
+            transformation: [
+              { width: 1500, crop: "limit" },
+              { fetch_format: "auto", quality: "auto" }
+              // KEIN background_removal hier!
+            ]
+          });
+          finalGallery.push(res.secure_url);
+        } catch (err) { console.error("Gallery Upload Error", err); }
+      }
     }
+
+    // 3. DATENBANK UPDATE
+    await prisma.powerstation.update({
+      where: { id },
+      data: {
+        thumbnailUrl: finalThumbnail,
+        images: {
+          set: finalGallery.length > 0 ? finalGallery : station.images
+        }
+      },
+    });
 
     return NextResponse.json({ 
       success: true, 
-      count: uploadedUrls.length,
-      folder: cloudinaryFolderPath 
+      aiProcessed: !!(thumbnailUrl && !station.thumbnailUrl),
+      galleryCount: finalGallery.length 
     });
 
   } catch (error: any) {
-    console.error("Enrichment API Error:", error.message);
-    return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Server Error', details: error.message }, { status: 500 });
   }
 }

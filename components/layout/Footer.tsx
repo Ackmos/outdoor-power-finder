@@ -15,7 +15,7 @@ export function Footer() {
           <h4 className="font-bold mb-4">Wissen</h4>
           <ul className="text-sm space-y-2 text-stone-600">
             <li><a href="/ratgeber/lifepo4" className="hover:text-black">Was ist LiFePO4?</a></li>
-            <li><a href="/ratgeber/wattstunden" className="hover:text-black">Wh richtig berechnen</a></li>
+            <li><a href="/ratgeber/wattstunden-rechner" className="hover:text-black">Wh richtig berechnen</a></li>
           </ul>
         </div>
         <div className="col-span-2">

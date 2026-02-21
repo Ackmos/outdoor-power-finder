@@ -14,20 +14,32 @@ async function main() {
 
   console.log("🚀 Starte Seeding...");
 
-  // 1. Brands anlegen
+  // 1. Brands anlegen (Erweitert um Descriptions)
   for (const b of brands) {
     await prisma.brand.upsert({
-      where: { name: b.name },
-      update: {},
-      create: { name: b.name },
+      where: { slug: b.slug }, // Slug ist meist stabiler als Name für den Check
+      update: { 
+        name: b.name, 
+        description: b.description,
+        description_section: b.description_section 
+      },
+      create: { 
+        name: b.name, 
+        slug: b.slug,
+        description: b.description,
+        description_section: b.description_section
+      },
     });
   }
-  console.log("✅ Marken geladen");
+  console.log("✅ Marken inkl. Beschreibungen geladen");
 
   // 2. Powerstations anlegen
   for (const p of powerstations) {
     const brand = await prisma.brand.findUnique({ where: { name: p.brandName } });
-    if (!brand) continue;
+    if (!brand) {
+      console.warn(`⚠️ Marke ${p.brandName} nicht gefunden für Powerstation ${p.name}`);
+      continue;
+    }
 
     const { brandName, ...data } = p;
     await prisma.powerstation.upsert({
@@ -51,7 +63,7 @@ async function main() {
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error("❌ Fehler beim Seeding:", e);
     process.exit(1);
   })
   .finally(async () => {

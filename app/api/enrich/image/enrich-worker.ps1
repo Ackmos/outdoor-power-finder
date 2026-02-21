@@ -18,87 +18,48 @@ if ($currentDir) {
     return
 }
 
-# --- 2. KONFIGURATION ---
+# --- enrich-worker.ps1 ---
+# (Umgebungsvariablen-Check bleibt wie gehabt)
+
+# --- KONFIGURATION ---
 $serverUrl = "http://localhost:3000"
-$minWidth  = 800   # Mindestbreite
-$maxImages = 5     # Maximale Bilder pro Gerät
-
-$serperHeaders = @{ 
-    "X-API-KEY"    = $SERPER_API_KEY
-    "Content-Type" = "application/json"
-}
 $authHeaders = @{ "Authorization" = "Bearer $ENRICH_TOKEN" }
+$serperHeaders = @{ "X-API-KEY" = $SERPER_API_KEY; "Content-Type" = "application/json" }
 
-# --- 3. TODO LISTE HOLEN ---
-Write-Host "`n--- Suche Powerstations ohne Bilder ---" -ForegroundColor Cyan
-try {
-    $todoList = Invoke-RestMethod -Uri "$serverUrl/api/internal/todo-images" -Headers $authHeaders -Method Get
-} catch {
-    Write-Host "Fehler beim Abrufen der Liste: $($_.Exception.Message)" -ForegroundColor Red
-    return
-}
+# --- TODO LISTE HOLEN ---
+$todoList = Invoke-RestMethod -Uri "$serverUrl/api/internal/todo-images" -Headers $authHeaders -Method Get
 
-if ($null -eq $todoList -or $todoList.Count -eq 0) {
-    Write-Host "Alles erledigt! Keine Eintraege gefunden." -ForegroundColor Green
-    return
-}
-
-# --- 4. VERARBEITUNG ---
 foreach ($station in $todoList) {
-    $id   = $station.id
+    $id = $station.id
     $name = $station.name
-    $brand = if ($station.brand -and $station.brand.name) { $station.brand.name } else { "" }
-
-    $foundUrls = New-Object System.Collections.Generic.List[string]
+    $brand = $station.brand.name
     Write-Host "`n>>> Starte Enrichment fuer: $brand $name" -ForegroundColor White
 
-    $queries = @(
-        "$brand $name powerstation official product",
-        "$brand $name ports connectors details"
-    )
+    # 1. Suche nach dem perfekten THUMBNAIL (Transparent/PNG)
+    $thumbQuery = "$brand $name powerstation official product transparent background png"
+    $thumbRes = Invoke-RestMethod -Uri "https://google.serper.dev/images" -Method Post -Body (@{q=$thumbQuery; num=1} | ConvertTo-Json) -Headers $serperHeaders
+    $foundThumbnail = $thumbRes.images[0].imageUrl
 
-    foreach ($q in $queries) {
-        $cleanQuery = $q.Trim()
-        try {
-            $body = @{ q = $cleanQuery; num = 10 } | ConvertTo-Json
-            $res  = Invoke-RestMethod -Uri "https://google.serper.dev/images" -Method Post -Body $body -Headers $serperHeaders
-            
-            if ($res.images) {
-                foreach ($img in $res.images) {
-                    # KORREKTUR: Serper nutzt 'imageWidth' statt 'width'
-                    $imgWidth = 0
-                    if ($img.imageWidth) { $imgWidth = [int]$img.imageWidth }
+    # 2. Suche nach GALERIE-BILDERN (Details/Anschluesse)
+    $galleryQuery = "$brand $name powerstation ports connectors details"
+    $galleryRes = Invoke-RestMethod -Uri "https://google.serper.dev/images" -Method Post -Body (@{q=$galleryQuery; num=5} | ConvertTo-Json) -Headers $serperHeaders
+    $foundGallery = New-Object System.Collections.Generic.List[string]
+    foreach($img in $galleryRes.images) { $foundGallery.Add($img.imageUrl) }
 
-                    if ($imgWidth -ge $minWidth -and $foundUrls.Count -lt $maxImages) {
-                        if (-not $foundUrls.Contains($img.imageUrl)) {
-                            $foundUrls.Add($img.imageUrl)
-                        }
-                    }
-                }
-            }
-        } catch { 
-            Write-Host "    Search-Error: $($_.Exception.Message)" -ForegroundColor Gray 
-        }
-    }
-
-    Write-Host "    HQ-Bilder gefunden: $($foundUrls.Count)" -ForegroundColor Gray
-
-    # --- 5. SERVER UPDATE ---
-    if ($foundUrls.Count -gt 0) {
+    # --- SERVER UPDATE ---
+    if ($foundThumbnail) {
         $payload = @{ 
             id = $id
-            imageUrls = @($foundUrls) 
+            thumbnailUrl = $foundThumbnail
+            galleryUrls = @($foundGallery) 
         } | ConvertTo-Json -Depth 10
 
         try {
             Invoke-RestMethod -Uri "$serverUrl/api/enrich/image" -Method Post -Body $payload -Headers $authHeaders -ContentType "application/json"
-            Write-Host "    [SUCCESS] Galerie gespeichert." -ForegroundColor Green
+            Write-Host "    [SUCCESS] Thumbnail und $($foundGallery.Count) Galerie-Bilder gesendet." -ForegroundColor Green
         } catch {
             Write-Host "    [ERROR] Server-Fehler bei $name" -ForegroundColor Red
         }
-    } else {
-        Write-Host "    [SKIP] Keine passenden Bilder gefunden." -ForegroundColor Yellow
     }
-
     Start-Sleep -Seconds 1
 }

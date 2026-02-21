@@ -1,14 +1,55 @@
 {
-  "brands": [
-    { "name": "EcoFlow" },
-    { "name": "Jackery" },
-    { "name": "Bluetti" },
-    { "name": "Anker" },
-    { "name": "Goal Zero" },
-    { "name": "Dometic" },
-    { "name": "Ugreen" },
-    { "name": "Allpowers" }
+"brands": [
+    {
+      "name": "EcoFlow",
+      "slug": "ecoflow",
+      "description": "Innovationsführer für extrem schnelles Laden und smarte App-Steuerung.",
+      "description_section": "EcoFlow hat die Branche der portablen Powerstations seit seiner Gründung im Jahr 2017 durch Drohnen-Ingenieure im Sturm erobert. Was EcoFlow besonders gut macht, ist die kompromisslose Geschwindigkeit. Mit der patentierten X-Stream-Technologie setzen sie den Goldstandard für Ladezeiten: Viele Geräte laden in unter 80 Minuten voll auf, was sie ideal für Nutzer macht, die spontan Energie benötigen. Bekannt ist das Unternehmen zudem für seine DELTA- und RIVER-Serien, die ein breites Spektrum vom ultraleichten Camping-Begleiter bis hin zur massiven Heimsicherung abdecken. Ein technisches Highlight ist das hochentwickelte Batteriemanagementsystem (BMS), das Spannung, Strom und Temperatur in Echtzeit überwacht. In Kombination mit der EcoFlow-App, die als eine der besten auf dem Markt gilt, erhalten Nutzer eine präzise Kontrolle über jeden Watt-Fluss. EcoFlow ist zudem Vorreiter bei der Integration von Smart-Home-Lösungen, wie dem Smart Home Panel, das die Powerstation direkt in den Sicherungskasten einbindet. Wer auf modernste LiFePO4-Technologie, ein zukunftssicheres Ökosystem und maximale Konnektivität setzt, findet hier die leistungsstärksten Lösungen für den mobilen und stationären Einsatz."
+    },
+    {
+      "name": "Jackery",
+      "slug": "jackery",
+      "description": "Der Pionier für benutzerfreundliche und robuste Outdoor-Solargeneratoren.",
+      "description_section": "Jackery gilt als der Urvater des modernen Solargenerators und hat das Konzept der 'Plug-and-Play'-Energie für das Volk zugänglich gemacht. Was Jackery besonders gut macht, ist die Reduktion auf das Wesentliche: absolute Zuverlässigkeit und kinderleichte Bedienung. Bekannt ist die Marke für ihre markante orange-schwarze Optik der Explorer-Serie, die weltweit in Vanlife-Kreisen und bei Camping-Enthusiasten Kultstatus genießt. Die Geräte sind für ihre Robustheit und Langlebigkeit unter realen Outdoor-Bedingungen berühmt. Jackery setzt auf ein geschlossenes System, bei dem die SolarSaga-Paneele perfekt auf die Powerstations abgestimmt sind, was eine maximale Energieausbeute bei minimalem Konfigurationsaufwand garantiert. In den letzten Jahren hat Jackery mit der 'Plus'-Serie den Sprung zu langlebigen LFP-Zellen vollzogen, ohne dabei die kompakte Bauweise aufzugeben. Der Hersteller legt großen Wert auf Sicherheit und Zertifizierungen, was sie zur ersten Wahl für Familien und Gelegenheitsnutzer macht, die ein Gerät suchen, das einfach funktioniert. Jackery steht für die Freiheit, überall autark zu sein, ohne ein Ingenieursstudium absolvieren zu müssen – ein echter Klassiker, der durch Qualität und Service überzeugt."
+    },
+    {
+      "name": "Bluetti",
+      "slug": "bluetti",
+      "description": "Spezialist für modulare Systeme und maximale Kapazitätserweiterung.",
+      "description_section": "Bluetti (unter dem Mutterkonzern PowerOak) hat sich als der Architekt für große Energiespeicher etabliert. Was Bluetti besonders gut macht, ist die Modularität. Mit Modellen wie der AC300 oder AC500 bieten sie Systeme an, die keine fest verbaute Batterie haben, sondern durch externe Batteriemodule wie die B300 flexibel erweitert werden können – bis hin zu Kapazitäten, die ein ganzes Haus tagelang versorgen. Bekannt ist Bluetti vor allem für ihre konsequente Nutzung der LiFePO4-Technologie, lange bevor die Konkurrenz nachzog, was ihren Geräten eine Lebensdauer von über 10 Jahren bei täglicher Nutzung verleiht. Ein weiteres Markenzeichen ist die enorme Solarladeleistung; Bluetti-Geräte verfügen oft über zwei MPPT-Laderegler, was das gleichzeitige Laden über verschiedene Solar-Arrays ermöglicht. Die Wechselrichter der Marke gehören zu den stärksten am Markt und bewältigen mühelos hohe Anlaufströme von schweren Werkzeugen oder Haushaltsgeräten. Bluetti ist die Marke für Technik-Liebhaber und Off-Grid-Profis, die Wert auf technische Tiefe, extreme Zyklenfestigkeit und ein System legen, das mit ihren Anforderungen mitwachsen kann."
+    },
+    {
+      "name": "Anker",
+      "slug": "anker",
+      "description": "Premium-Qualität mit Fokus auf Langlebigkeit und innovative GaN-Technik.",
+      "description_section": "Anker hat seinen weltweiten Ruf als Marktführer für Ladekabel und Powerbanks perfekt auf die SOLIX-Powerstations übertragen. Was Anker besonders gut macht, ist die Hardware-Qualität. Unter dem Label 'InfiniPower' kombiniert der Hersteller LiFePO4-Batterien mit Elektronikkomponenten in Industriequalität, die auf eine Lebensdauer von 50.000 Stunden ausgelegt sind. Bekannt ist Anker für das Vertrauen in die eigenen Produkte, was sich in einer branchenunüblichen 5-Jahres-Vollgarantie widerspiegelt. Die Geräte der SOLIX-Serie zeichnen sich durch ein extrem smartes Design aus, wie zum Beispiel die integrierten Lichtleisten oder die ergonomischen Easy-Pull-Griffe bei den größeren Modellen. Anker nutzt seine Expertise in der GaN-Technologie (Galliumnitrid), um die Effizienz der Wechselrichter zu maximieren und die Hitzeentwicklung zu minimieren. Die Bedienung ist intuitiv, und die App-Anbindung funktioniert gewohnt stabil. Anker richtet sich an Nutzer, die eine Powerstation als langfristige Investition sehen und Wert auf Ästhetik, Sicherheit und ein exzellentes Markenerlebnis legen. Es ist die perfekte Wahl für das moderne Zuhause oder professionelle Foto- und Video-Produktionen im Freien."
+    },
+    {
+      "name": "Goal Zero",
+      "slug": "goal-zero",
+      "description": "Professionelles Equipment für Expeditionen und extreme Bedingungen.",
+      "description_section": "Goal Zero ist der Veteran der Branche und wurde mit dem Ziel gegründet, humanitäre Hilfe durch Energie zu leisten. Was Goal Zero besonders gut macht, ist die Systemintegration für den professionellen Einsatz. Die Yeti-Serie ist das Synonym für mobile Energie in der Forschung, bei Rettungsdiensten und auf Expeditionen. Bekannt ist der Hersteller für sein unerreichtes Ökosystem an Zubehör: Von festen Einbausätzen für Fahrzeuge bis hin zu professionellen Lichtsystemen und den legendären Nomad-Solarpaneelen. Goal Zero setzt auf einen sehr hohen Qualitätsstandard bei der Stromqualität (reiner Sinus), was den Betrieb sensibelster medizinischer oder wissenschaftlicher Geräte ermöglicht. Das Design ist funktional und robust, ausgelegt für den harten Einsatz in staubigen oder kalten Umgebungen. Einzigartig ist die modulare Bauweise der Komponenten, die eine Reparierbarkeit ermöglicht, die man bei moderner Unterhaltungselektronik oft vermisst. Wer eine Marke sucht, die sich über Jahrzehnte im härtesten Einsatz bewährt hat und keine Kompromisse bei der Zuverlässigkeit eingeht, landet bei Goal Zero. Es ist das Werkzeug für Profis, die sich keine Ausfälle erlauben können."
+    },
+    {
+      "name": "Dometic",
+      "slug": "dometic",
+      "description": "Spezialist für die Integration in Wohnmobile, Boote und Outdoor-Kühlsysteme.",
+      "description_section": "Dometic ist kein reiner Elektronikhersteller, sondern ein Gigant im Bereich des mobilen Lebens (Camping, Marine, Automotive). Was Dometic besonders gut macht, ist die Optimierung auf Gleichstrom-Verbraucher (DC). Die PLB-Serie wurde gezielt für den Betrieb von Kompressor-Kühlboxen entwickelt, was sie zum Favoriten für Overlander und Segler macht. Bekannt ist die Marke für ihre extrem hohe Fertigungsqualität, die den Vibrationen und der salzhaltigen Luft in maritimen Umgebungen standhält. Im Gegensatz zu Lifestyle-Powerstations sind Dometic-Geräte eher als mobile Bordbatterien zu verstehen. Sie verzichten auf unnötigen Schnickschnack und konzentrieren sich auf maximale Laufzeiten für Kühlgeräte und Beleuchtung. Die Geräte verfügen oft über robuste Edelstahlgriffe und Gehäuse, die Stöße problemlos wegstecken. Dometic ist die erste Wahl für Profi-Camper, die bereits Produkte des Herstellers nutzen und eine Energiequelle suchen, die nahtlos in ihre bestehende Infrastruktur passt. Wer Wochen im Outback oder auf dem Meer verbringt, schätzt die kompromisslose Zuverlässigkeit und die jahrzehntelange Erfahrung von Dometic in der Erstausrüstung von Freizeitfahrzeugen."
+    },
+    {
+      "name": "Ugreen",
+      "slug": "ugreen",
+      "description": "Moderner Tech-Ansatz mit exzellentem Preis-Leistungs-Verhältnis.",
+      "description_section": "Ugreen hat sich vom Kabel-Spezialisten zu einem ernstzunehmenden Konkurrenten im Powerstation-Markt gewandelt. Was Ugreen besonders gut macht, ist die Implementierung modernster Ladetechnologien zu einem sehr kompetitiven Preis. Die PowerRoam-Serie, entwickelt in Zusammenarbeit mit dem Batterieriesen BYD, besticht durch eine extrem hohe Energiedichte und kompakte Bauform. Bekannt ist Ugreen für seine 'U-Turbo'-Technologie, die es ermöglicht, Geräte mit hoher Leistungsaufnahme (bis zu 2500W bei kleineren Modellen) kurzzeitig zu betreiben, indem die Spannung intelligent angepasst wird. Ein großer Vorteil für digitale Nomaden ist die hohe Anzahl an USB-C-Anschlüssen mit hohen Watt-Raten, die das Laden von mehreren Laptops gleichzeitig ohne zusätzliche Netzteile ermöglichen. Das Design ist schlicht, modern und funktional, wobei die Gehäuse oft eine sehr angenehme Haptik aufweisen. Ugreen füllt die Lücke zwischen günstigen Einsteigermodellen und teuren Premiummarken, indem sie High-End-Features wie LFP-Zellen, App-Steuerung und schnelles Laden in einem attraktiven Gesamtpaket anbieten. Ideal für alle, die eine moderne, zuverlässige Energiequelle für den Alltag und Freizeit suchen."
+    },
+    {
+      "name": "Allpowers",
+      "slug": "allpowers",
+      "description": "Preiswerter Einstieg in die Welt der Solargeneratoren mit hoher Kapazität.",
+      "description_section": "Allpowers ist der Preisbrecher auf dem Markt für mobile Energie. Was Allpowers besonders gut macht, ist das Bereitstellen von viel Kapazität (Wh) für ein vergleichsweise kleines Budget. Bekannt ist der Hersteller dafür, die Einstiegshürden für die solare Autarkie extrem niedrig zu halten. Während andere Marken im Hochpreissegment agieren, bietet Allpowers solide Technik für Camper und Festivalbesucher an, die eine einfache Lösung für das Laden von Smartphones, Laptops oder Kühlboxen suchen. Ein technischer Vorteil ist das oft sehr geringe Gewicht im Verhältnis zur Kapazität, was die Geräte besonders portabel macht. Allpowers bietet zudem eine breite Palette an faltbaren Solarpaneelen an, die für ihre hohe Kompatibilität mit Drittanbietern geschätzt werden. Die neueren Modelle verfügen mittlerweile ebenfalls über App-Steuerungen und nutzen teilweise LiFePO4-Zellen, um wettbewerbsfähig zu bleiben. Wer nicht die absolut schnellste Ladezeit oder das robusteste Gehäuse für eine Wüstenexpedition benötigt, sondern einfach viel Strom für sein Geld möchte, findet in Allpowers einen ehrlichen und funktionalen Partner für das nächste Outdoor-Wochenende."
+    }
   ],
+
   "powerstations": [
     {
       "slug": "ecoflow-river-2",
