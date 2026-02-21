@@ -36,14 +36,14 @@ export async function GET(req: Request) {
 
       // --- LOGIK-UPDATE: TRENNUNG VON THUMBNAIL UND GALERIE ---
       
-      // 1. Das Thumbnail finden (liegt im Unterordner /thumbnail)
+      // 1. Das Thumbnail finden (Sicherheitscheck mit ? hinzugefügt)
       const thumbResource = allImages.find((r: any) => 
-        r.folder.endsWith('/thumbnail')
+        r.folder?.endsWith('/thumbnail')
       );
 
-      // 2. Die Galerie-Bilder filtern (alles, was NICHT im /thumbnail Ordner liegt)
+      // 2. Die Galerie-Bilder filtern (Sicherheitscheck mit ? hinzugefügt)
       const galleryUrls = allImages
-        .filter((r: any) => !r.folder.endsWith('/thumbnail'))
+        .filter((r: any) => !r.folder?.endsWith('/thumbnail'))
         .map((r: any) => r.secure_url);
 
       const thumbnailUrl = thumbResource ? thumbResource.secure_url : null;
