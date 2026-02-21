@@ -36,12 +36,12 @@ foreach ($station in $todoList) {
     Write-Host "`n>>> Starte Enrichment fuer: $brand $name" -ForegroundColor White
 
     # 1. Suche nach dem perfekten THUMBNAIL (Transparent/PNG)
-    $thumbQuery = "$brand $name powerstation official product transparent background png"
+    $thumbQuery = "$brand $name powerstation official product transparent background png -sketch -vector -drawing -schematic"
     $thumbRes = Invoke-RestMethod -Uri "https://google.serper.dev/images" -Method Post -Body (@{q=$thumbQuery; num=1} | ConvertTo-Json) -Headers $serperHeaders
     $foundThumbnail = $thumbRes.images[0].imageUrl
 
     # 2. Suche nach GALERIE-BILDERN (Details/Anschluesse)
-    $galleryQuery = "$brand $name powerstation ports connectors details"
+    $galleryQuery = "$brand $name powerstation ports connectors details -drawing -schematic -sketch -vector"
     $galleryRes = Invoke-RestMethod -Uri "https://google.serper.dev/images" -Method Post -Body (@{q=$galleryQuery; num=5} | ConvertTo-Json) -Headers $serperHeaders
     $foundGallery = New-Object System.Collections.Generic.List[string]
     foreach($img in $galleryRes.images) { $foundGallery.Add($img.imageUrl) }
