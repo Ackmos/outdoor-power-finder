@@ -25,36 +25,35 @@ export async function GET(req: Request) {
         const stationSlug = station.name.toLowerCase().replace(/\s+/g, '-');
         
         const mainFolderPath = `powerstations/${brandSlug}/${stationSlug}`;
+        const thumbnailFolderPath = `${mainFolderPath}/thumbnail`;
         const normalizedMain = normalize(mainFolderPath);
 
-        // Suche über public_id Präfix
+        // ✅ EXAKTE SUCHE: Wir suchen nur in diesen zwei spezifischen Ordnern
+        // Die Anführungszeichen (") sind wichtig, falls Leerzeichen in Pfaden vorkommen
         const searchResponse = await cloudinary.search
-          .expression(`public_id:${mainFolderPath}/*`)
+          .expression(`folder:"${mainFolderPath}" OR folder:"${thumbnailFolderPath}"`)
           .sort_by('public_id', 'asc')
           .max_results(100)
           .execute();
 
         const allResources = searchResponse.resources || [];
 
-        // Ordnerpfad aus der public_id berechnen
+        // Ordnerpfad aus der public_id berechnen (als Sicherheitsnetz)
         const processedResources = allResources.map((r: any) => {
           const parts = r.public_id.split('/');
           const derivedFolder = parts.slice(0, -1).join('/');
-          
           return {
             ...r,
             calculatedFolder: normalize(derivedFolder)
           };
         });
-
-        // --- TYPISIERUNG FIX: (r: any) hinzugefügt ---
-
-        // 1. Galerie-Bilder (müssen exakt im Hauptordner liegen)
+        console.log(processedResources.map((r: any) => r.calculatedFolder));
+        // 1. Galerie-Bilder (exakt im Hauptordner)
         const galleryUrls = processedResources
           .filter((r: any) => r.calculatedFolder === normalizedMain)
           .map((r: any) => r.secure_url);
 
-        // 2. Thumbnail (muss im Unterordner /thumbnail liegen)
+        // 2. Thumbnail (im /thumbnail Ordner)
         const thumbResource = processedResources.find((r: any) => 
           r.calculatedFolder.endsWith('thumbnail')
         );
@@ -62,38 +61,34 @@ export async function GET(req: Request) {
         let finalThumbnailUrl = thumbResource ? thumbResource.secure_url : null;
         let usedFallback = false;
 
-        // 3. Fallback: Erstes Galeriebild nutzen, falls kein Thumbnail-Ordner existiert
         if (!finalThumbnailUrl && galleryUrls.length > 0) {
           finalThumbnailUrl = galleryUrls[0];
           usedFallback = true;
         }
 
-        // 4. Datenbank Update
+        // Datenbank Update
         await prisma.powerstation.update({
           where: { id: station.id },
           data: {
             thumbnailUrl: finalThumbnailUrl,
-            images: {
-              set: galleryUrls
-            },
+            images: { set: galleryUrls },
           }
         });
 
         console.log(`[SYNC] ${station.name}: Galerie=${galleryUrls.length} | Thumbnail=${finalThumbnailUrl ? (usedFallback ? "Fallback ✅" : "Ordner ✅") : "❌"}`);
 
-        results.push({ name: station.name, success: true, galleryCount: galleryUrls.length });
+        results.push({ name: station.name, galleryCount: galleryUrls.length });
 
       } catch (stationError: any) {
         console.error(`❌ [ERROR] ${station.name}:`, stationError);
-        results.push({ name: station.name, success: false, error: stationError?.message });
+        results.push({ name: station.name, error: stationError?.message });
       }
     }
 
     revalidatePath("/");
-    return NextResponse.json({ message: "Sync abgeschlossen", details: results });
+    return NextResponse.json({ message: "Sync präzise abgeschlossen", details: results });
 
-  } catch (globalError: any) {
-    console.error("🚨 [GLOBAL ERROR]:", globalError);
+  } catch (error: any) {
     return NextResponse.json({ error: "Kritischer Fehler" }, { status: 500 });
   }
 }
