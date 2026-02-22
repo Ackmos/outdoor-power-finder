@@ -1,5 +1,18 @@
 import type { NextConfig } from "next";
 
+const cspHeader = `
+    default-src 'self';
+    script-src 'self' 'unsafe-eval' 'unsafe-inline';
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' blob: data: res.cloudinary.com;
+    font-src 'self';
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'none';
+    upgrade-insecure-requests;
+`.replace(/\s{2,}/g, ' ').trim();
+
 const nextConfig: NextConfig = {
   // 1. Bilder-Konfiguration (Cloudinary)
   images: {
@@ -7,10 +20,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
-        port: '',
         pathname: '/**', 
       },
     ],
+    minimumCacheTTL: 31536000,
   },
 
   // 2. SEO-Fix: www auf non-www umleiten
@@ -36,6 +49,10 @@ const nextConfig: NextConfig = {
         // Diese Header gelten für alle Pfade deiner Seite
         source: '/:path*',
         headers: [
+          { 
+            key: 'Content-Security-Policy', 
+            value: cspHeader 
+          }, // Die neue CSP
           {
             key: 'X-Content-Type-Options',
             value: 'nosniff', // Verhindert MIME-Sniffing (Löst deinen Fehler)
@@ -58,6 +75,7 @@ const nextConfig: NextConfig = {
         // ✅ SPEZIELL FÜR BILDER: Erzwingt die Header für den Image-Optimizer
         source: '/_next/image/:path*',
         headers: [
+        { key: 'Content-Security-Policy', value: cspHeader },
         { key: 'X-Content-Type-Options', value: 'nosniff' },
         { key: 'X-Frame-Options', value: 'DENY' },
         { key: 'X-XSS-Protection', value: '1; mode=block' }, // Jetzt auch für Bilder
