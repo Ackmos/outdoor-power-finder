@@ -6,6 +6,7 @@ import "./globals.css";
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de" className="scroll-smooth">
+      <head />
       <body className="antialiased selection:bg-yellow-200">
         <Navbar />
         {children}

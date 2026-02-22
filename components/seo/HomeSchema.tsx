@@ -1,5 +1,5 @@
 export function HomeSchema({ stations }: { stations: any[] }) {
-  const baseUrl = "https://outdoor-power-finder.vercel.app/";
+  const baseUrl = "https://powerstation-finder.de";
 
   const schema = {
     "@context": "https://schema.org",

@@ -21,13 +21,13 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://powerfinder.app" 
+        "item": "https://powerstation-finder.de" 
       },
       ...items.map((item, index) => ({
         "@type": "ListItem",
         "position": index + 2,
         "name": item.label,
-        "item": `https://powerfinder.app${item.href}`
+        "item": `https://powerstation-finder.de${item.href}`
       }))
     ]
   };
