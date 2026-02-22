@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: [station.thumbnailUrl || ""], // Zeigt das Bild beim Teilen auf Social Media
     },
     alternates: {
-      canonical: `https://deine-domain.de/powerstation-test/${slug}`,
+      canonical: `https://powerstation-finder.de/powerstation-test/${slug}`,
     }
   };
 }
