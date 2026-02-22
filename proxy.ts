@@ -1,10 +1,11 @@
+// src/proxy.ts
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function proxy(request: NextRequest) {
   const response = NextResponse.next()
-
-  // Die Security-Header, die wir erzwingen wollen
+  
+  // Wir definieren die Header zentral
   const securityHeaders = {
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
@@ -13,7 +14,7 @@ export function proxy(request: NextRequest) {
     'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: res.cloudinary.com; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;"
   }
 
-  // Wir setzen die Header für ALLE Antworten (auch Bilder & Chunks)
+  // Header injizieren
   Object.entries(securityHeaders).forEach(([key, value]) => {
     response.headers.set(key, value)
   })
@@ -21,14 +22,20 @@ export function proxy(request: NextRequest) {
   return response
 }
 
-// Der Matcher sorgt dafür, dass die Middleware für alles gilt
 export const config = {
   matcher: [
     /*
-     * Matcht alle Pfade außer:
-     * - api (API-Routen haben oft eigene Logik)
-     * - favicon.ico, sitemap.xml etc.
+     * Wir fangen hiermit ALLES ab, inklusive der internen Pfade.
+     * Die Ausnahmen begrenzen wir nur auf wirklich statische Dateien im public-Ordner.
      */
-    '/((?!api|favicon.ico|sitemap.xml|robots.txt).*)',
+    {
+      source: '/((?!api|_next/static|favicon.ico|sitemap.xml|robots.txt).*)',
+      missing: [
+        { type: 'header', key: 'next-router-prefetch' },
+        { type: 'header', key: 'purpose', value: 'prefetch' },
+      ],
+    },
+    // ✅ Wir fügen den Image-Pfad explizit hinzu, um sicherzugehen
+    '/_next/image/:path*',
   ],
 }
