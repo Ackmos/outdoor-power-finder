@@ -13,6 +13,9 @@ import { BrandAuthority } from "@/components/home/BrandAuthority";
 export const metadata = {
   title: "Outdoor Power Finder | Finde die perfekte Powerstation 2026",
   description: "Vergleiche über 50 Powerstations von EcoFlow, Jackery & Bluetti basierend auf echten Kapazitäts-Berechnungen.",
+  alternates: {
+    canonical: `/`,
+  },
 };
 
 export default async function HomePage() {

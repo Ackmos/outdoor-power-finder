@@ -54,6 +54,16 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        // ✅ SPEZIELL FÜR BILDER: Erzwingt die Header für den Image-Optimizer
+        source: '/_next/image/:path*',
+        headers: [
+        { key: 'X-Content-Type-Options', value: 'nosniff' },
+        { key: 'X-Frame-Options', value: 'DENY' },
+        { key: 'X-XSS-Protection', value: '1; mode=block' }, // Jetzt auch für Bilder
+        { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        ],
+      }
     ];
   },
 
