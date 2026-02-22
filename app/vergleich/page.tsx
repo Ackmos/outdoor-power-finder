@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: 'Powerstation Vergleich: Modelle direkt gegenüberstellen',
   description: 'Nutze unseren Powerstation Vergleich, um technische Daten, Kapazität und Preise von EcoFlow, Jackery, Bluetti und anderen Marken direkt zu vergleichen.',
   keywords: ['Powerstation Vergleich', 'Stromspeicher Vergleich', 'EcoFlow vs Jackery', 'Bluetti Vergleich', 'Solar Generator Daten'],
+  alternates: {
+      canonical: `/vergleich`,
+    },
   openGraph: {
     title: 'Der große Powerstation Vergleich | Alle Modelle gegenübergestellt',
     description: 'Finde die passende Powerstation durch direkten Vergleich der technischen Spezifikationen.',

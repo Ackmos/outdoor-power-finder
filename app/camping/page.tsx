@@ -5,6 +5,9 @@ import { Tent, Sun, Zap } from "lucide-react";
 export const metadata = {
   title: "Powerstations für Camping & Outdoor 2026 | POWERFINDER",
   description: "Die besten tragbaren Powerstations für dein nächstes Abenteuer. Leicht, robust und solarfähig.",
+  alternates: {
+      canonical: `/camping`,
+    },
 };
 
 export default async function CampingPage() {

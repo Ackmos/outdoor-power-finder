@@ -30,9 +30,37 @@ const nextConfig: NextConfig = {
     ];
   },
 
+  async headers() {
+    return [
+      {
+        // Diese Header gelten für alle Pfade deiner Seite
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff', // Verhindert MIME-Sniffing (Löst deinen Fehler)
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY', // Verhindert Clickjacking (Löst deinen Fehler)
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block', // Zusätzlicher Schutz vor Cross-Site Scripting
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin', // Schützt Nutzerdaten beim Verlassen der Seite
+          },
+        ],
+      },
+    ];
+  },
+
   // 3. Performance & Sicherheit (Optional, aber empfohlen)
   reactStrictMode: true,
   poweredByHeader: false, // Erschwert das Identifizieren der Tech-Stack für Bots
+  trailingSlash: false,
 };
 
 export default nextConfig;

@@ -20,6 +20,9 @@ export async function generateMetadata({
   
   return {
     title: `${brand.name} Powerstations im Test & Vergleich | POWERFINDER`,
+    alternates: {
+      canonical: `/marke/${slug}`,
+    },
     description: brand.description || `Alle aktuellen Powerstations von ${brand.name} in der Übersicht. Technische Daten und echte Kapazitäts-Tests.`
   };
 }

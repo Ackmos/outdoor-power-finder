@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: 'Was ist LiFePO4? Lithium-Eisenphosphat einfach erklärt',
   description: 'Erfahre alles über LiFePO4 Batterien: Warum Lithium-Eisenphosphat die sicherste und langlebigste Technologie für moderne Powerstations ist.',
   keywords: ['LiFePO4', 'Lithium-Eisenphosphat', 'Akku Technologie', 'Powerstation Akku', 'Batteriesicherheit'],
+  alternates: {
+    canonical: '/ratgeber/lifepo4', // Erzeugt https://powerstation-finder.de/ratgeber/lifepo4
+  },
   openGraph: {
     title: 'Was ist LiFePO4? Der ultimative Guide zur Akku-Technik',
     description: 'Sicherheit, Langlebigkeit und Effizienz: Warum LiFePO4 der Standard für Powerstations geworden ist.',

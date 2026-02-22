@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: 'Wh richtig berechnen: Powerstation Laufzeit-Rechner',
   description: 'Berechne mit unserer Realitäts-Formel (inkl. 85% Inverter-Effizienz), wie lange deine Powerstation wirklich durchhält. Wh in Betriebsstunden einfach umrechnen.',
   keywords: ['Wh berechnen', 'Wattstunden Rechner', 'Powerstation Kapazität', 'Laufzeit berechnen', 'Inverter Effizienz'],
+  alternates: {
+    canonical: '/ratgeber/wattstunden-rechner', // Erzeugt https://powerstation-finder.de/ratgeber/wattstunden-rechner
+  },
   openGraph: {
     title: 'Wattstunden (Wh) richtig berechnen für Powerstations',
     description: 'Verstehe die Realitäts-Formel: So berechnest du die echte Laufzeit deiner Geräte.',

@@ -5,6 +5,9 @@ import { ShieldCheck, Home, Zap } from "lucide-react";
 export const metadata = {
   title: "Notstromversorgung für Zuhause | POWERFINDER",
   description: "Sichere dein Zuhause gegen Blackouts ab. Powerstations mit hoher Kapazität und USV-Funktion.",
+  alternates: {
+      canonical: `/notstrom`,
+    },
 };
 
 export default async function NotstromPage() {
