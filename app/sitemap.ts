@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { MetadataRoute } from 'next';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://outdoor-power-finder.vercel.app";
+  const baseUrl = "https://powerstation-finder.de/";
 
 // 1. Alle Stationen abrufen
   const stations = await prisma.powerstation.findMany({

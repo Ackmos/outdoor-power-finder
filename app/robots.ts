@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/api/', // Verhindert, dass interne APIs gescannt werden
     },
-    sitemap: 'https://outdoor-power-finder.vercel.app/sitemap.xml', // Pfad zu deiner Sitemap
+    sitemap: 'https://www.powerstation-finder.de//sitemap.xml', // Pfad zu deiner Sitemap
   };
 }
