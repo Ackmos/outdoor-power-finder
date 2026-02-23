@@ -17,7 +17,7 @@ export function ProductSchema({ station }: { station: any }) {
       "priceCurrency": "EUR",
       "price": station.priceApprox,
       "availability": "https://schema.org/InStock",
-      "url": `https://outdoor-power-finder.vercel.app/powerstation-test/${station.slug}`
+      "url": `https://powerstation-finder.de/powerstation-test/${station.slug}`
     },
     // Optional: Falls du ein Rating-Feld hast
     "aggregateRating": {

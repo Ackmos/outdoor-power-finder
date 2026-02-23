@@ -67,8 +67,8 @@ export function StationHero({ station }: { station: any }) {
               alt={`${station.brand.name} ${station.name} Ansicht ${activeIndex + 1}`}
               fill
               className="object-contain p-8 animate-in fade-in zoom-in-95 duration-500"
-              sizes="(max-width: 768px) 100vw, 50vw"
-              priority
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+              priority // Nur das Hauptbild wird vorgeladen
             />
           ) : (
             <div className="text-stone-300 italic">Bild nicht verfügbar</div>
@@ -110,11 +110,15 @@ export function StationHero({ station }: { station: any }) {
                 )}
               >
                 <Image 
-                  src={img} 
-                  alt="Thumbnail" 
-                  fill 
-                  className="object-contain p-2"
-                />
+                // WICHTIG: Auch hier die Cloudinary-ID nutzen für Konsistenz!
+                src={getCloudinaryId(img)} 
+                alt={`Thumbnail ${idx + 1}`} 
+                fill 
+                // WICHTIG: Dem Browser sagen, dass dieses Bild nur 80px breit ist!
+                // Das verhindert den Download von w_1080 für kleine Icons.
+                sizes="80px" 
+                className="object-contain p-2"
+              />
               </button>
             ))}
           </div>
