@@ -71,7 +71,9 @@
       "priceApprox": 269.0,
       "warrantyYears": 5,
       "pros": "Extrem leicht;Sehr schnelle Ladezeit;Langlebiger Akku",
-      "cons": "Geringe Kapazität für lange Trips"
+      "cons": "Geringe Kapazität für lange Trips",
+      "affiliateUrl": ""
+
     },
     {
       "slug": "jackery-explorer-300-plus",
@@ -93,7 +95,8 @@
       "priceApprox": 349.0,
       "warrantyYears": 5,
       "pros": "Kompaktes Design;Gute App-Anbindung;Sicherer LiFePO4 Akku",
-      "cons": "Kein USV-Modus"
+      "cons": "Kein USV-Modus",
+      "affiliateUrl": "https://amzn.to/4b73tYg"
     },
     {
       "slug": "bluetti-eb3a",
@@ -115,7 +118,8 @@
       "priceApprox": 299.0,
       "warrantyYears": 2,
       "pros": "Integriertes Licht;Sehr hohe Ausgangsleistung für die Größe;Wireless Charging",
-      "cons": "Lüfter etwas laut beim Laden"
+      "cons": "Lüfter etwas laut beim Laden",
+      "affiliateUrl": "https://amzn.to/3MG6QME"
     },
     {
       "slug": "anker-521-powerhouse",
@@ -137,7 +141,8 @@
       "priceApprox": 230.0,
       "warrantyYears": 5,
       "pros": "Robustes Gehäuse;5 Jahre Garantie;Gutes Preis-Leistungs-Verhältnis",
-      "cons": "Langsames Aufladen"
+      "cons": "Langsames Aufladen",
+      "affiliateUrl": "https://amzn.to/4c6L3YL"
     },
     {
       "slug": "ecoflow-river-2-max",
@@ -159,7 +164,8 @@
       "priceApprox": 499.0,
       "warrantyYears": 5,
       "pros": "Schnellstes Laden am Markt;Vielseitige Anschlüsse;Leicht für 500Wh",
-      "cons": "Lüftersteuerung etwas aggressiv"
+      "cons": "Lüftersteuerung etwas aggressiv",
+      "affiliateUrl": "https://amzn.to/4c6LQsE"
     },
     {
       "slug": "jackery-explorer-500",
@@ -181,7 +187,8 @@
       "priceApprox": 550.0,
       "warrantyYears": 2,
       "pros": "Bewährte Zuverlässigkeit;Gute Effizienz;Leise im Betrieb",
-      "cons": "Kein USB-C;Veraltete Akku-Chemie (NMC)"
+      "cons": "Kein USB-C;Veraltete Akku-Chemie (NMC)",
+      "affiliateUrl": "https://amzn.to/4aPdzM4"
     },
     {
       "slug": "bluetti-eb55",
@@ -203,7 +210,8 @@
       "priceApprox": 449.0,
       "warrantyYears": 2,
       "pros": "Viele Ausgänge;Wireless Charging;Kompakt",
-      "cons": "Externes Netzteil klobig"
+      "cons": "Externes Netzteil klobig",
+      "affiliateUrl": "https://amzn.to/4cbtTJr"
     },
     {
       "slug": "anker-535-powerhouse",
@@ -225,7 +233,8 @@
       "priceApprox": 499.0,
       "warrantyYears": 5,
       "pros": "Hochwertiges Display;Sehr robust;Lange Garantie",
-      "cons": "Etwas schwerer als Konkurrenz"
+      "cons": "Etwas schwerer als Konkurrenz",
+      "affiliateUrl": "https://amzn.to/3ZP3mdF"
     },
     {
       "slug": "goal-zero-yeti-200x",
@@ -247,7 +256,8 @@
       "priceApprox": 299.0,
       "warrantyYears": 2,
       "pros": "Ultra portabel;Hervorragende Verarbeitung;Ideal für Kleingeräte",
-      "cons": "Geringe AC-Leistung;Kein LiFePO4"
+      "cons": "Geringe AC-Leistung;Kein LiFePO4",
+      "affiliateUrl": "https://amzn.to/4s0vq9Q"
     },
     {
       "slug": "bluetti-ac2a",
@@ -269,7 +279,8 @@
       "priceApprox": 229.0,
       "warrantyYears": 5,
       "pros": "Sehr kompakt;Schnelles Laden;Günstiger Einstieg",
-      "cons": "Kleine Kapazität"
+      "cons": "Kleine Kapazität",
+      "affiliateUrl": "https://amzn.to/40cOp5r"
     },
     {
       "slug": "ecoflow-river-2-pro",
@@ -291,7 +302,8 @@
       "priceApprox": 699.0,
       "warrantyYears": 5,
       "pros": "Gutes Verhältnis Leistung/Gewicht;Vielseitig;Schnelles AC-Laden",
-      "cons": "Lüftergeräusch bei hoher Last"
+      "cons": "Lüftergeräusch bei hoher Last",
+      "affiliateUrl": "https://amzn.to/3MVZiW2"
     },
     {
       "slug": "jackery-explorer-100-plus",
@@ -313,7 +325,8 @@
       "priceApprox": 149.0,
       "warrantyYears": 2,
       "pros": "Handgepäck-tauglich im Flugzeug;Extrem leicht;Modernes Design",
-      "cons": "Kein AC-Ausgang;Nur für Kleingeräte"
+      "cons": "Kein AC-Ausgang;Nur für Kleingeräte",
+      "affiliateUrl": "https://amzn.to/4rS0kBT"
     },
     {
       "slug": "dometic-plb40",
@@ -335,7 +348,8 @@
       "priceApprox": 649.0,
       "warrantyYears": 2,
       "pros": "Optimiert für Kühlboxen;Extrem robust;Präzises Display",
-      "cons": "Kein AC-Inverter;Teuer"
+      "cons": "Kein AC-Inverter;Teuer",
+      "affiliateUrl": "https://amzn.to/4lbpJ73"
     },
     {
       "slug": "ugreen-powerroam-600",
@@ -357,7 +371,8 @@
       "priceApprox": 599.0,
       "warrantyYears": 5,
       "pros": "Gute App;U-Turbo Modus für hohe Lasten;Solide Bauweise",
-      "cons": "Etwas schwerer"
+      "cons": "Etwas schwerer",
+      "affiliateUrl": "https://amzn.to/4c7p8AJ"
     },
     {
       "slug": "bluetti-eb70",
@@ -379,7 +394,8 @@
       "priceApprox": 599.0,
       "warrantyYears": 2,
       "pros": "Hohe Kapazität für den Preis;Zehn Ausgänge;Kompakter Griff",
-      "cons": "Keine App-Steuerung"
+      "cons": "Keine App-Steuerung",
+      "affiliateUrl": "https://amzn.to/4rAumd7"
     },
     {
       "slug": "allpowers-s200",
@@ -401,7 +417,8 @@
       "priceApprox": 129.0,
       "warrantyYears": 1,
       "pros": "Sehr preiswert;Sehr kompakt;Wireless Charging",
-      "cons": "Geringe Lebenszyklen;Veralteter Akku"
+      "cons": "Geringe Lebenszyklen;Veralteter Akku",
+      "affiliateUrl": "https://amzn.to/4tZu5Cb"
     },
     {
       "slug": "bluetti-ac70",
@@ -423,7 +440,8 @@
       "priceApprox": 699.0,
       "warrantyYears": 5,
       "pros": "Hoher Solar-Input;Power-Lifting Modus;Gute App",
-      "cons": "Etwas klobiger als River 2 Pro"
+      "cons": "Etwas klobiger als River 2 Pro",
+      "affiliateUrl": "https://amzn.to/4axdtKh"
     },
     {
       "slug": "goal-zero-yeti-500x",
@@ -445,7 +463,8 @@
       "priceApprox": 599.0,
       "warrantyYears": 2,
       "pros": "Hervorragendes Display;Präzise Regelung;Hochwertige Ports",
-      "cons": "Langsames Laden;Teuer für NMC-Technik"
+      "cons": "Langsames Laden;Teuer für NMC-Technik",
+      "affiliateUrl": "https://amzn.to/4c7pSpv"
     },
     {
       "slug": "anker-solix-c800",
@@ -467,7 +486,8 @@
       "priceApprox": 649.0,
       "warrantyYears": 5,
       "pros": "Integriertes Staufach;Sehr schnelles Laden;Hohe AC-Leistung",
-      "cons": "Größer als vergleichbare Modelle"
+      "cons": "Größer als vergleichbare Modelle",
+      "affiliateUrl": "https://amzn.to/3OtKTks"
     },
     {
       "slug": "ecoflow-delta-2",
@@ -489,7 +509,8 @@
       "priceApprox": 899.0,
       "warrantyYears": 5,
       "pros": "Erweiterbare Kapazität;Hervorragende App;Zukunftssicher",
-      "cons": "Lüfter deutlich hörbar"
+      "cons": "Lüfter deutlich hörbar",
+      "affiliateUrl": "https://amzn.to/4aSmhcx"
     }
   ],
     "devices": [
