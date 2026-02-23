@@ -3,9 +3,19 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function proxy(request: NextRequest) {
-  const response = NextResponse.next()
+  const { pathname } = request.nextUrl
   
-  // Wir definieren die Header zentral
+  // 1. Logging: Welche URL wird gerade verarbeitet?
+  // Das erscheint in deinem Terminal (VS Code / Deployment Log)
+  //console.log(`[Proxy-Check] Anfrage für: ${pathname}`)
+
+  // Spezielles Logging für Bilder
+  //if (pathname.startsWith('/_next/image')) {
+  //  console.log(`[Proxy-Image] 🔥 BILD-OPTIMIZER GETRIGGERT: ${request.url}`)
+  //}
+
+  const response = NextResponse.next()
+
   const securityHeaders = {
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
@@ -14,7 +24,6 @@ export function proxy(request: NextRequest) {
     'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: res.cloudinary.com; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;"
   }
 
-  // Header injizieren
   Object.entries(securityHeaders).forEach(([key, value]) => {
     response.headers.set(key, value)
   })
@@ -22,20 +31,7 @@ export function proxy(request: NextRequest) {
   return response
 }
 
+// 2. Aggressiver Matcher: Wir fangen alles ab, um den Fehler einzugrenzen
 export const config = {
-  matcher: [
-    /*
-     * Wir fangen hiermit ALLES ab, inklusive der internen Pfade.
-     * Die Ausnahmen begrenzen wir nur auf wirklich statische Dateien im public-Ordner.
-     */
-    {
-      source: '/((?!api|_next/static|favicon.ico|sitemap.xml|robots.txt).*)',
-      missing: [
-        { type: 'header', key: 'next-router-prefetch' },
-        { type: 'header', key: 'purpose', value: 'prefetch' },
-      ],
-    },
-    // ✅ Wir fügen den Image-Pfad explizit hinzu, um sicherzugehen
-    '/_next/image/:path*',
-  ],
+  matcher: '/:path*', 
 }
