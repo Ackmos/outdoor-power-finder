@@ -28,7 +28,7 @@ model Powerstation {
   name            String
   brand           Brand    @relation(fields: [brandId], references: [id])
   brandId         String
-  images          String[]
+  images          String[] //Bilder Array für die Galerie
   thumbnailUrl String?  // Das perfekte, transparente Vorschaubild
   
   // Leistung & Akku

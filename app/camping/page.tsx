@@ -42,7 +42,7 @@ export default async function CampingPage() {
       <div className="container mx-auto px-4 -mt-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {stations.map((station) => (
-            <StationCard key={station.id} station={station} />
+            <StationCard key={station.id} station={station} titleTag="h2" />
           ))}
         </div>
         

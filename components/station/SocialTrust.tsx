@@ -24,9 +24,9 @@ export function SocialTrust({ brandName }: { brandName: string }) {
           <p className="text-xs font-bold uppercase tracking-wider text-stone-400">
             Marken-Status
           </p>
-          <h4 className="text-lg font-bold text-stone-900 leading-tight">
+          <h2 className="text-lg font-bold text-stone-900 leading-tight">
             {trust.badge}
-          </h4>
+          </h2>
           <p className="text-sm text-stone-500 leading-relaxed">
             {trust.reason}
           </p>

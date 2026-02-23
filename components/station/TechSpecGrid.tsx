@@ -60,9 +60,9 @@ export function TechSpecGrid({ station }: { station: any }) {
       <CardContent className="space-y-8">
         {specGroups.map((group) => (
           <div key={group.title} className="space-y-3">
-            <h4 className="text-[10px] uppercase font-bold text-stone-400 border-b pb-1">
+            <h3 className="text-[10px] uppercase font-bold text-stone-400 border-b pb-1">
               {group.title}
-            </h4>
+            </h3>
             <div className="grid gap-2">
               {group.items.map((item) => (
                 <div key={item.label} className="flex justify-between items-center group">

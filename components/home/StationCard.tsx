@@ -6,12 +6,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Battery, Zap, ArrowRight } from "lucide-react";
 import { getCloudinaryId } from "@/lib/image-utils";
+import { title } from "process";
 
-export function StationCard({ station }: { station: any }) {
+interface StationCardProps {
+  station: any;
+  titleTag?: "h2" | "h3" | "h4"; // Wir definieren die erlaubten Tags
+}
+
+export function StationCard({ station, titleTag = "h3" }: StationCardProps) {
   // PRIORITÄT: 1. Dediziertes Thumbnail -> 2. Erstes Galeriebild -> 3. Fallback
   const displayImageId = getCloudinaryId(station.thumbnailUrl) || getCloudinaryId(station.images?.[0]) || 'fallback-id';  
   // Optimierung für die Grid-Ansicht (600px Breite ist ideal für Desktop & Mobile)
   const thumbnail = displayImageId ? getCloudinaryId(displayImageId) : null;
+  const Tag = titleTag; // Dynamisches Tag für die Überschrift
 
   return (
     <Card className="group hover:shadow-2xl transition-all duration-500 border-stone-200 overflow-hidden bg-white flex flex-col h-full">
@@ -41,9 +48,9 @@ export function StationCard({ station }: { station: any }) {
       </div>
 
       <CardContent className="p-6 flex-grow mb-0 pb-0">
-        <h3 className="text-xl font-bold mb-3 leading-tight group-hover:text-blue-600 transition-colors">
+        <Tag className="text-xl font-bold mb-3 leading-tight group-hover:text-blue-600 transition-colors">
           {station.name}
-        </h3>
+        </Tag>
         
         <div className="grid grid-cols-2 gap-3 mb-5">
           <div className="flex items-center gap-2 text-stone-600">

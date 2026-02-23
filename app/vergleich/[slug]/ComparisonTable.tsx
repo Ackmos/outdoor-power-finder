@@ -52,7 +52,7 @@ export function ComparisonTable({ stationA, stationB }: { stationA: any; station
               <Image src={getCloudinaryId(s.images?.[0] || s.thumbnailUrl)} alt={s.name} fill className="object-contain" />
             </div>
             <span className="text-[10px] font-bold text-stone-400 uppercase mb-1">{s.brand.name}</span>
-            <h3 className="text-lg font-black leading-tight text-center">{s.name}</h3>
+            <h2 className="text-lg font-black leading-tight text-center">{s.name}</h2>
             <p className="text-xl font-bold text-blue-600 mt-1">{s.priceApprox}€</p>
           </div>
         ))}

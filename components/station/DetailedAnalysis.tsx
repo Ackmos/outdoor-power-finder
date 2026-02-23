@@ -62,10 +62,10 @@ export function DetailedAnalysis({ station }: { station: any }) {
           <div className="bg-stone-900 text-stone-100 p-6 rounded-3xl shadow-xl relative overflow-hidden">
             <Lightbulb className="w-12 h-12 text-yellow-400 absolute -top-2 -right-2 opacity-20 rotate-12" />
             <div className="relative z-10">
-              <h4 className="font-bold text-lg mb-2 flex items-center gap-2">
+              <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
                 <Lightbulb className="w-5 h-5 text-yellow-400" />
                 Pro-Tipp
-              </h4>
+              </h3>
               <p className="text-sm text-stone-400 leading-relaxed">
                 Nutze für {station.capacityWh > 1000 ? 'größere Lasten' : 'mobile Einsätze'} immer 
                 hochwertige Kabel, um den Spannungsabfall zu minimieren. Die {station.name} arbeitet 
@@ -76,10 +76,10 @@ export function DetailedAnalysis({ station }: { station: any }) {
 
           {/* Technical Note Box */}
           <div className="bg-white border border-stone-200 p-6 rounded-3xl shadow-sm">
-            <h4 className="font-bold text-stone-900 mb-3 flex items-center gap-2">
+            <h3 className="font-bold text-stone-900 mb-3 flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-green-600" />
               Technik-Check
-            </h4>
+            </h3>
             <p className="text-sm text-stone-600 italic leading-relaxed">
               "{analysis.technicalNote}"
             </p>
