@@ -5,8 +5,8 @@ import { ArrowRight } from "lucide-react";
 export function TopComparisons() {
   const featured = [
     { s1: "EcoFlow River 2", s2: "Bluetti EB3A", slug: "ecoflow-river-2-vs-bluetti-eb3a" },
-    { s1: "Jackery Explorer 300 Plus", s2: "EcoFlow River 2 Max", slug: "jackery-300-plus-vs-ecoflow-river-2-max" },
-    { s1: "Bluetti AC2A", s2: "Jackery 240", slug: "bluetti-ac2a-vs-jackery-240" },
+    { s1: "Jackery Explorer 300 Plus", s2: "EcoFlow River 2 Max", slug: "jackery-explorer-300-plus-vs-ecoflow-river-2-max" },
+    { s1: "Bluetti AC2A", s2: "Jackery 240", slug: "bluetti-ac2a-vs-jackery-explorer-100-plus" },
   ];
 
   return (

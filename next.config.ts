@@ -19,6 +19,9 @@ const nextConfig: NextConfig = {
     loader: 'custom',
     loaderFile: './lib/cloudinary-loader.ts',
   },
+  experimental: {
+  optimizePackageImports: ['lucide-react'], // Fasst Icons effizienter zusammen
+  },
 
   // 2. SEO-Fix: www auf non-www umleiten
   async redirects() {

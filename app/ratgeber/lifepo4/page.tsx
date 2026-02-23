@@ -34,12 +34,12 @@ export default function LiFePO4Page() {
           <div className="grid md:grid-cols-2 gap-6">
             <div className="p-6 rounded-3xl bg-stone-50 border border-stone-100">
               <ShieldCheck className="w-8 h-8 text-blue-600 mb-4" />
-              <h3 className="font-black mb-2">Maximale Sicherheit</h3>
+              <h2 className="font-black mb-2">Maximale Sicherheit</h2>
               <p className="text-sm text-stone-500">Im Gegensatz zu herkömmlichen Li-Ion Akkus sind LiFePO4-Zellen thermisch stabil. Das bedeutet, dass sie selbst bei Beschädigung praktisch nicht brennen oder explodieren können.</p>
             </div>
             <div className="p-6 rounded-3xl bg-stone-50 border border-stone-100">
               <Zap className="w-8 h-8 text-blue-600 mb-4" />
-              <h3 className="font-black mb-2">3000+ Ladezyklen</h3>
+              <h2 className="font-black mb-2">3000+ Ladezyklen</h2>
               <p className="text-sm text-stone-500">Ein großer Vorteil von <strong>LiFePO4</strong> ist die Lebensdauer. Diese Akkus halten oft 10 Jahre oder länger, was sie deutlich nachhaltiger macht als ältere Technologien.</p>
             </div>
           </div>
