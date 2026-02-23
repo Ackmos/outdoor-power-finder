@@ -16,14 +16,8 @@ const cspHeader = `
 const nextConfig: NextConfig = {
   // 1. Bilder-Konfiguration (Cloudinary)
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-        pathname: '/**', 
-      },
-    ],
-    minimumCacheTTL: 31536000,
+    loader: 'custom',
+    loaderFile: './lib/cloudinary-loader.ts',
   },
 
   // 2. SEO-Fix: www auf non-www umleiten
@@ -71,24 +65,12 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      {
-        // ✅ SPEZIELL FÜR BILDER: Erzwingt die Header für den Image-Optimizer
-        source: '/_next/image',
-          headers: [
-            { key: 'Content-Security-Policy', value: cspHeader },
-            { key: 'X-Content-Type-Options', value: 'nosniff' },
-            { key: 'X-Frame-Options', value: 'DENY' },
-            { key: 'X-XSS-Protection', value: '1; mode=block' },
-            { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          ],
-      }
     ];
   },
 
   // 3. Performance & Sicherheit (Optional, aber empfohlen)
   reactStrictMode: true,
   poweredByHeader: false, // Erschwert das Identifizieren der Tech-Stack für Bots
-  trailingSlash: false,
 };
 
 export default nextConfig;

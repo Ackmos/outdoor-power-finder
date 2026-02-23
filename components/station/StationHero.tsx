@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { getOptimizedImage } from "@/lib/cloudinary-loader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Zap, Battery, ChevronLeft, ChevronRight } from "lucide-react";
 import { AffiliateCTA } from "./AffiliateCTA";
 import { SocialTrust } from "./SocialTrust";
 import { cn } from "@/lib/utils"; // Shadcn Utility
+import { getCloudinaryId } from "@/lib/image-utils";
 
 export function StationHero({ station }: { station: any }) {
   // Falls 'images' leer ist, nutzen wir das alte 'imageUrl' als Fallback-Array
@@ -16,8 +16,7 @@ export function StationHero({ station }: { station: any }) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   // Hauptbild-Optimierung (Cloudinary)
-  const currentHeroImage = getOptimizedImage(gallery[activeIndex], 1000, 1000);
-
+  const currentImageId = getCloudinaryId(gallery[activeIndex]);
   const nextImage = () => setActiveIndex((prev) => (prev + 1) % gallery.length);
   const prevImage = () => setActiveIndex((prev) => (prev - 1 + gallery.length) % gallery.length);
 
@@ -64,7 +63,7 @@ export function StationHero({ station }: { station: any }) {
           {gallery[activeIndex] ? (
             <Image 
               key={activeIndex} // Key sorgt für Re-Animation beim Wechsel
-              src={currentHeroImage} 
+              src={currentImageId} 
               alt={`${station.brand.name} ${station.name} Ansicht ${activeIndex + 1}`}
               fill
               className="object-contain p-8 animate-in fade-in zoom-in-95 duration-500"
@@ -111,7 +110,7 @@ export function StationHero({ station }: { station: any }) {
                 )}
               >
                 <Image 
-                  src={getOptimizedImage(img, 200, 200)} 
+                  src={img} 
                   alt="Thumbnail" 
                   fill 
                   className="object-contain p-2"

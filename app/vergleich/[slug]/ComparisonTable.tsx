@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link"; // Neu hinzugefügt
-import { getOptimizedImage } from "@/lib/cloudinary-loader";
 import { CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button"; // Neu hinzugefügt
+import { getCloudinaryId } from "@/lib/image-utils";
 
 export function ComparisonTable({ stationA, stationB }: { stationA: any; stationB: any }) {
   const specs = [
@@ -19,7 +19,6 @@ export function ComparisonTable({ stationA, stationB }: { stationA: any; station
   const ComparisonRow = ({ spec }: { spec: any }) => {
     const valA = stationA[spec.key];
     const valB = stationB[spec.key];
-
     const isBetterA = spec.better === "higher" ? valA > valB : spec.better === "lower" ? valA < valB : false;
     const isBetterB = spec.better === "higher" ? valB > valA : spec.better === "lower" ? valB < valA : false;
 
@@ -50,7 +49,7 @@ export function ComparisonTable({ stationA, stationB }: { stationA: any; station
         {[stationA, stationB].map((s, i) => (
           <div key={i} className="p-6 flex flex-col items-center">
             <div className="relative w-32 h-32 mb-3">
-              <Image src={getOptimizedImage(s.images?.[0] || s.thumbnailUrl, 400, 400)} alt={s.name} fill className="object-contain" />
+              <Image src={getCloudinaryId(s.images?.[0] || s.thumbnailUrl)} alt={s.name} fill className="object-contain" />
             </div>
             <span className="text-[10px] font-bold text-stone-400 uppercase mb-1">{s.brand.name}</span>
             <h3 className="text-lg font-black leading-tight text-center">{s.name}</h3>

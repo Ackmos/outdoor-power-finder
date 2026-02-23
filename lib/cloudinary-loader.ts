@@ -1,9 +1,28 @@
 // src/lib/cloudinary-loader.ts
 
-export function getOptimizedImage(url: string, width = 800, height = 800) {
-  if (!url || !url.includes("cloudinary.com")) return url;
+interface CloudinaryLoaderProps {
+  src: string;
+  width: number;
+  quality?: number;
+}
 
-  // Wir fügen die Parameter nach "/upload/" ein
-  const transformationString = `f_auto,q_auto,c_pad,b_white,w_${width},h_${height}`;
-  return url.replace("/upload/", `/upload/${transformationString}/`);
+export default function cloudinaryLoader({ src, width, quality }: CloudinaryLoaderProps) {
+  // Wir nutzen deine Cloudinary-ID (Cloud Name)
+  const cloudName = 'dw8mkffls';
+  
+  // Parameter für Cloudinary: Format-Auto, Qualität-Auto, Breite, Padding und weißer Hintergrund
+  const params = [
+    'f_auto',
+    'q_auto',
+    `w_${width}`,
+    'c_pad',
+    'b_white'
+  ].join(',');
+
+  // Sicherheit: Wir entfernen einen führenden Slash, falls vorhanden, 
+  // damit die URL nicht // bekommt
+  const cleanSrc = src.startsWith('/') ? src.slice(1) : src;
+
+  // Die fertige URL, die direkt auf Cloudinary zeigt
+  return `https://res.cloudinary.com/${cloudName}/image/upload/${params}/${cleanSrc}`;
 }

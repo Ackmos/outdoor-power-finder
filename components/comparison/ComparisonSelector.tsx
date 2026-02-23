@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { getOptimizedImage } from "@/lib/cloudinary-loader";
 import { Button } from "@/components/ui/button";
 import { Plus, ArrowRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getCloudinaryId } from "@/lib/image-utils";
 
 export function ComparisonSelector({ stations }: { stations: any[] }) {
   const [s1, setS1] = useState<any>(null);
@@ -28,7 +28,7 @@ export function ComparisonSelector({ stations }: { stations: any[] }) {
             <X className="w-4 h-4" />
           </button>
           <div className="relative w-40 h-40 mb-4">
-            <Image src={getOptimizedImage(selected.thumbnailUrl || selected.images[0], 400, 400)} alt={selected.name} fill className="object-contain" />
+            <Image src={getCloudinaryId(selected.thumbnailUrl || selected.images[0])} alt={selected.name} fill className="object-contain" />
           </div>
           <p className="text-xs font-bold text-blue-600 uppercase mb-1">{selected.brand.name}</p>
           <h3 className="text-xl font-bold text-center">{selected.name}</h3>

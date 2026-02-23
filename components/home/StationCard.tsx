@@ -1,18 +1,17 @@
 // src/components/home/StationCard.tsx
 import Link from "next/link";
 import Image from "next/image";
-import { getOptimizedImage } from "@/lib/cloudinary-loader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Battery, Zap, ArrowRight } from "lucide-react";
+import { getCloudinaryId } from "@/lib/image-utils";
 
 export function StationCard({ station }: { station: any }) {
   // PRIORITÄT: 1. Dediziertes Thumbnail -> 2. Erstes Galeriebild -> 3. Fallback
-  const displayImage = station.thumbnailUrl || station.images?.[0] || station.imageUrl || null;
-  
+  const displayImageId = getCloudinaryId(station.thumbnailUrl) || getCloudinaryId(station.images?.[0]) || 'fallback-id';  
   // Optimierung für die Grid-Ansicht (600px Breite ist ideal für Desktop & Mobile)
-  const thumbnail = displayImage ? getOptimizedImage(displayImage, 600, 450) : null;
+  const thumbnail = displayImageId ? getCloudinaryId(displayImageId) : null;
 
   return (
     <Card className="group hover:shadow-2xl transition-all duration-500 border-stone-200 overflow-hidden bg-white flex flex-col h-full">

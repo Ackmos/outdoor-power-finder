@@ -28,8 +28,6 @@ export async function GET(req: Request) {
         const thumbnailFolderPath = `${mainFolderPath}/thumbnail`;
         const normalizedMain = normalize(mainFolderPath);
 
-        // ✅ EXAKTE SUCHE: Wir suchen nur in diesen zwei spezifischen Ordnern
-        // Die Anführungszeichen (") sind wichtig, falls Leerzeichen in Pfaden vorkommen
         const searchResponse = await cloudinary.search
           .expression(`folder:"${mainFolderPath}" OR folder:"${thumbnailFolderPath}"`)
           .sort_by('public_id', 'asc')
@@ -38,7 +36,6 @@ export async function GET(req: Request) {
 
         const allResources = searchResponse.resources || [];
 
-        // Ordnerpfad aus der public_id berechnen (als Sicherheitsnetz)
         const processedResources = allResources.map((r: any) => {
           const parts = r.public_id.split('/');
           const derivedFolder = parts.slice(0, -1).join('/');
@@ -47,37 +44,37 @@ export async function GET(req: Request) {
             calculatedFolder: normalize(derivedFolder)
           };
         });
-        console.log(processedResources.map((r: any) => r.calculatedFolder));
-        // 1. Galerie-Bilder (exakt im Hauptordner)
-        const galleryUrls = processedResources
-          .filter((r: any) => r.calculatedFolder === normalizedMain)
-          .map((r: any) => r.secure_url);
 
-        // 2. Thumbnail (im /thumbnail Ordner)
+        // ✅ ÄNDERUNG: Wir speichern nun die public_id statt der secure_url
+        const galleryIds = processedResources
+          .filter((r: any) => r.calculatedFolder === normalizedMain)
+          .map((r: any) => r.public_id);
+
+        // ✅ ÄNDERUNG: Auch beim Thumbnail nehmen wir die public_id
         const thumbResource = processedResources.find((r: any) => 
           r.calculatedFolder.endsWith('thumbnail')
         );
 
-        let finalThumbnailUrl = thumbResource ? thumbResource.secure_url : null;
+        let finalThumbnailId = thumbResource ? thumbResource.public_id : null;
         let usedFallback = false;
 
-        if (!finalThumbnailUrl && galleryUrls.length > 0) {
-          finalThumbnailUrl = galleryUrls[0];
+        if (!finalThumbnailId && galleryIds.length > 0) {
+          finalThumbnailId = galleryIds[0];
           usedFallback = true;
         }
 
-        // Datenbank Update
+        // Datenbank Update mit den IDs
         await prisma.powerstation.update({
           where: { id: station.id },
           data: {
-            thumbnailUrl: finalThumbnailUrl,
-            images: { set: galleryUrls },
+            thumbnailUrl: finalThumbnailId, // Speichert jetzt z.B. "powerstations/anker/..."
+            images: { set: galleryIds },
           }
         });
 
-        console.log(`[SYNC] ${station.name}: Galerie=${galleryUrls.length} | Thumbnail=${finalThumbnailUrl ? (usedFallback ? "Fallback ✅" : "Ordner ✅") : "❌"}`);
+        console.log(`[SYNC] ${station.name}: Galerie=${galleryIds.length} | Thumbnail=${finalThumbnailId ? (usedFallback ? "Fallback ✅" : "ID ✅") : "❌"}`);
 
-        results.push({ name: station.name, galleryCount: galleryUrls.length });
+        results.push({ name: station.name, galleryCount: galleryIds.length });
 
       } catch (stationError: any) {
         console.error(`❌ [ERROR] ${station.name}:`, stationError);
@@ -86,7 +83,7 @@ export async function GET(req: Request) {
     }
 
     revalidatePath("/");
-    return NextResponse.json({ message: "Sync präzise abgeschlossen", details: results });
+    return NextResponse.json({ message: "Sync mit Public IDs abgeschlossen", details: results });
 
   } catch (error: any) {
     return NextResponse.json({ error: "Kritischer Fehler" }, { status: 500 });
