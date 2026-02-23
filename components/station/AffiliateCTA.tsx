@@ -1,13 +1,25 @@
+"use client"; // Wichtig für Interaktivität
+
 // src/components/station/AffiliateCTA.tsx
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, ExternalLink } from "lucide-react";
+import { track } from '@vercel/analytics';
 
 interface AffiliateCTAProps {
+  stationName: string;
   shopName?: string;
   url?: string;
 }
 
-export function AffiliateCTA({ shopName = "Amazon", url = "#" }: AffiliateCTAProps) {
+export function AffiliateCTA({stationName, shopName = "Amazon", url = "#" }: AffiliateCTAProps) {
+  // ✅ Die Tracking-Funktion
+  const handleAffiliateClick = () => {
+    track('Affiliate Click', {
+      station: stationName,
+      shop: shopName,
+      location: 'StationHero'
+    });
+  };
   return (
     <div className="space-y-3">
       <div className="flex flex-col gap-1">

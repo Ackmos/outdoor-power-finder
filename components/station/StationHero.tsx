@@ -52,7 +52,7 @@ export function StationHero({ station }: { station: any }) {
             </div>
           </div>
 
-          <AffiliateCTA url={station.affiliateUrl} />
+          <AffiliateCTA url={station.affiliateUrl} stationName={station.name}/>
           <SocialTrust brandName={station.brand.name} />
         </CardContent>
       </Card>
