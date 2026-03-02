@@ -16,8 +16,10 @@ import {
   Weight, 
   RotateCcw,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Banknote
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function FilterableProductGrid({ initialStations, brands }: any) {
   const pathname = usePathname();
@@ -35,6 +37,7 @@ export function FilterableProductGrid({ initialStations, brands }: any) {
   // 2. Filter-Werte aus der URL
   const filters = {
     brand: searchParams.get("brand") || "Alle",
+    priceSegment: searchParams.get("priceSegment") || "Alle", // NEU
     minWh: Number(searchParams.get("minWh")) || 0,
     minOutput: Number(searchParams.get("minOutput")) || 0,
     minCycles: Number(searchParams.get("minCycles")) || 0,
@@ -46,6 +49,13 @@ export function FilterableProductGrid({ initialStations, brands }: any) {
   // 3. Filter-Logik
   const filteredStations = useMemo(() => {
     return initialStations.filter((s: any) => {
+      const price = s.priceApprox || 0;
+      let matchPrice = true;
+      
+      if (filters.priceSegment === "Einsteiger") matchPrice = price < 500;
+      else if (filters.priceSegment === "Mittelklasse") matchPrice = price >= 500 && price <= 1500;
+      else if (filters.priceSegment === "Premium") matchPrice = price > 1500;
+
       const matchBrand = filters.brand === "Alle" || s.brand.name === filters.brand;
       const matchWh = s.capacityWh >= filters.minWh;
       const matchOutput = s.outputWatts >= filters.minOutput;
@@ -53,7 +63,7 @@ export function FilterableProductGrid({ initialStations, brands }: any) {
       const matchWeight = s.weightKg <= filters.maxWeight;
       const matchCharge = s.chargeTimeAcMin <= filters.maxChargeTime;
       const matchPorts = s.portsAc >= filters.minAcPorts;
-      return matchBrand && matchWh && matchOutput && matchCycles && matchWeight && matchCharge && matchPorts;
+      return matchBrand && matchPrice && matchWh && matchOutput && matchCycles && matchWeight && matchCharge && matchPorts;
     });
   }, [initialStations, filters]);
 
@@ -115,6 +125,36 @@ export function FilterableProductGrid({ initialStations, brands }: any) {
       {showFilters && (
         <div className="bg-white p-6 md:p-10 rounded-[2.5rem] border border-stone-100 shadow-xl animate-in fade-in zoom-in-95 duration-300">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+            
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 font-black text-stone-900 uppercase text-xs tracking-widest">
+                <Banknote className="w-4 h-4 text-purple-500" /> Preis-Klasse
+              </div>
+              <div className="flex flex-col gap-2">
+                {["Alle", "Einsteiger", "Mittelklasse", "Premium"].map((segment) => (
+                  <Button
+                    key={segment}
+                    variant={filters.priceSegment === segment ? "default" : "outline"}
+                    onClick={() => updateFilters({ priceSegment: segment })}
+                    className="justify-start rounded-xl h-11 font-bold gap-3"
+                  >
+                    <div className={cn(
+                      "w-2 h-2 rounded-full",
+                      segment === "Einsteiger" ? "bg-green-500" : 
+                      segment === "Mittelklasse" ? "bg-blue-500" : 
+                      segment === "Premium" ? "bg-purple-500" : "bg-stone-300"
+                    )} />
+                    {segment}
+                    <span className="ml-auto text-[10px] text-stone-400 font-normal">
+                      {segment === "Einsteiger" ? "< 500€" : 
+                       segment === "Mittelklasse" ? "500-1500€" : 
+                       segment === "Premium" ? "> 1500€" : ""}
+                    </span>
+                  </Button>
+                ))}
+              </div>
+            </div>
+            
             <div className="space-y-6">
               <div className="flex items-center gap-2 font-black text-stone-900 uppercase text-xs tracking-widest">
                 <Battery className="w-4 h-4 text-amber-500" /> Kapazität & Leistung

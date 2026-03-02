@@ -2,13 +2,14 @@ import type { NextConfig } from "next";
 
 const cspHeader = `
     default-src 'self';
-    script-src 'self' 'unsafe-eval' 'unsafe-inline';
+    script-src 'self' 'unsafe-eval' 'unsafe-inline' va.vercel-scripts.com;
     style-src 'self' 'unsafe-inline';
-    img-src 'self' blob: data: res.cloudinary.com;
+    img-src 'self' blob: data: res.cloudinary.com judskbgaiwwixhkfgxmn.supabase.co;
     font-src 'self';
     object-src 'none';
     base-uri 'self';
     form-action 'self';
+    connect-src 'self' vitals.vercel-insights.com judskbgaiwwixhkfgxmn.supabase.co;
     frame-ancestors 'none';
     upgrade-insecure-requests;
 `.replace(/\s{2,}/g, ' ').trim();
@@ -63,22 +64,7 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy', 
             value: cspHeader 
           }, // Die neue CSP
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff', // Verhindert MIME-Sniffing (Löst deinen Fehler)
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY', // Verhindert Clickjacking (Löst deinen Fehler)
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block', // Zusätzlicher Schutz vor Cross-Site Scripting
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin', // Schützt Nutzerdaten beim Verlassen der Seite
-          },
+          
         ],
       },
     ];

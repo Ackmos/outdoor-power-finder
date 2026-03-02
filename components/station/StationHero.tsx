@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Zap, Battery, ChevronLeft, ChevronRight } from "lucide-react";
+import { Zap, Battery, ChevronLeft, ChevronRight, Banknote } from "lucide-react";
 import { AffiliateCTA } from "./AffiliateCTA";
 import { SocialTrust } from "./SocialTrust";
 import { cn } from "@/lib/utils"; // Shadcn Utility
@@ -19,6 +19,16 @@ export function StationHero({ station }: { station: any }) {
   const currentImageId = getCloudinaryId(gallery[activeIndex]);
   const nextImage = () => setActiveIndex((prev) => (prev + 1) % gallery.length);
   const prevImage = () => setActiveIndex((prev) => (prev - 1 + gallery.length) % gallery.length);
+
+  // Preis-Kategorisierung Logik
+  const getPriceSegment = (price: number) => {
+    if (!price) return { label: "N/A", icons: "€", color: "text-stone-400" };
+    if (price < 500) return { label: "Einsteiger", icons: "€", color: "text-green-600" };
+    if (price <= 1500) return { label: "Mittelklasse", icons: "€€", color: "text-blue-600" };
+    return { label: "Premium", icons: "€€€", color: "text-purple-600" };
+  };
+
+  const priceInfo = getPriceSegment(station.priceApprox);
 
   return (
     <div className="grid gap-8 md:grid-cols-2 items-start">
@@ -35,7 +45,8 @@ export function StationHero({ station }: { station: any }) {
         </CardHeader>
         
         <CardContent className="px-0 space-y-8">
-          <div className="grid grid-cols-2 gap-4">
+          {/* Grid auf 3 Spalten erweitert für Desktop */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div className="bg-white p-4 rounded-2xl border border-stone-100 shadow-sm">
               <div className="flex items-center gap-2 mb-1">
                 <Battery className="w-4 h-4 text-blue-500" />
@@ -43,12 +54,24 @@ export function StationHero({ station }: { station: any }) {
               </div>
               <p className="text-xl font-bold">{station.capacityWh} Wh</p>
             </div>
+            
             <div className="bg-white p-4 rounded-2xl border border-stone-100 shadow-sm">
               <div className="flex items-center gap-2 mb-1">
                 <Zap className="w-4 h-4 text-yellow-500" />
                 <span className="text-xs font-bold text-stone-400 uppercase">Leistung</span>
               </div>
               <p className="text-xl font-bold">{station.outputWatts} W</p>
+            </div>
+
+            {/* NEU: Preis-Segment Box */}
+            <div className="bg-white p-4 rounded-2xl border border-stone-100 shadow-sm col-span-2 md:col-span-1">
+              <div className="flex items-center gap-2 mb-1">
+                <Banknote className={cn("w-4 h-4", priceInfo.color)} />
+                <span className="text-xs font-bold text-stone-400 uppercase">Preis-Klasse</span>
+              </div>
+              <p className={cn("text-xl font-bold", priceInfo.color)}>
+                {priceInfo.icons} <span className="text-sm font-medium text-stone-500 ml-1">{priceInfo.label}</span>
+              </p>
             </div>
           </div>
 

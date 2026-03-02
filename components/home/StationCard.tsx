@@ -4,9 +4,10 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Battery, Zap, ArrowRight } from "lucide-react";
+import { Battery, Zap, ArrowRight, Banknote } from "lucide-react";
 import { getCloudinaryId } from "@/lib/image-utils";
 import { title } from "process";
+import { cn } from "@/lib/utils";
 
 interface StationCardProps {
   station: any;
@@ -19,6 +20,16 @@ export function StationCard({ station, titleTag = "h3" }: StationCardProps) {
   // Optimierung für die Grid-Ansicht (600px Breite ist ideal für Desktop & Mobile)
   const thumbnail = displayImageId ? getCloudinaryId(displayImageId) : null;
   const Tag = titleTag; // Dynamisches Tag für die Überschrift
+
+  // Preis-Segment Helper (Gleich wie im Hero für Konsistenz)
+  const getPriceInfo = (price: number) => {
+    if (!price) return { label: "N/A", color: "text-stone-400", bg: "bg-stone-100", text: "text-stone-600" };
+    if (price < 500) return { label: "Einsteiger", color: "text-green-600", bg: "bg-green-100", text: "text-green-700" };
+    if (price <= 1500) return { label: "Mittelklasse", color: "text-blue-600", bg: "bg-blue-100", text: "text-blue-700" };
+    return { label: "Premium", color: "text-purple-600", bg: "bg-purple-100", text: "text-purple-700" };
+  };
+
+  const priceInfo = getPriceInfo(station.priceApprox);
 
   return (
     <Card className="group hover:shadow-2xl transition-all duration-500 border-stone-200 overflow-hidden bg-white flex flex-col h-full">
@@ -68,6 +79,9 @@ export function StationCard({ station, titleTag = "h3" }: StationCardProps) {
         </div>
 
         <div className="flex flex-wrap gap-1.5">
+          <Badge className={cn("px-2 py-0.5 border-none text-[10px] font-black uppercase tracking-wider shadow-sm", priceInfo.bg, priceInfo.text)}>
+             {priceInfo.label}
+          </Badge>
           <Badge variant="outline" className="text-[9px] uppercase tracking-tighter border-stone-200 text-stone-500">
             {station.batteryType}
           </Badge>
@@ -80,14 +94,9 @@ export function StationCard({ station, titleTag = "h3" }: StationCardProps) {
       </CardContent>
 
       <CardFooter className="p-6 pt-0 flex justify-between items-center border-t border-stone-50">
-        <div className="flex flex-col">
-          <span className="text-[10px] text-stone-400 font-bold uppercase">Bester Preis</span>
-          <span className="text-2xl font-black text-stone-900 leading-none">
-            {station.priceApprox}<span className="text-sm ml-0.5">€</span>
-          </span>
-        </div>
+
         <Link href={`/powerstation-test/${station.slug}`}>
-          <Button size="sm" className="gap-2 rounded-full px-5 font-bold shadow-sm hover:shadow-blue-200 transition-all">
+          <Button size="sm" className="gap-2 rounded-full px-5 font-bold shadow-sm">
             Details <ArrowRight className="w-4 h-4" />
           </Button>
         </Link>

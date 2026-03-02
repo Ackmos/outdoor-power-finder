@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   Zap, Sun, HardDrive, Weight, Battery, 
   RefreshCw, Timer, Plug, Smartphone, Usb, Car, Activity, 
-  ShieldCheck
+  ShieldCheck,
+  Banknote
 } from "lucide-react";
 
 export function TechSpecGrid({ station }: { station: any }) {
@@ -12,6 +13,12 @@ export function TechSpecGrid({ station }: { station: any }) {
     if (min < 60) return `${min} Min.`;
     const hrs = min / 60;
     return `${hrs.toLocaleString('de-DE', { maximumFractionDigits: 1 })} Std.`;
+  };
+
+  const getPriceLabel = (price: number) => {
+    if (price < 500) return "Einsteiger (€)";
+    if (price <= 1500) return "Mittelklasse (€€)";
+    return "Premium (€€€)";
   };
 
   const specGroups = [
@@ -23,6 +30,7 @@ export function TechSpecGrid({ station }: { station: any }) {
         { label: "Spitzenleistung", value: `${station.surgeWatts} W`, icon: Activity },
         { label: "Akku-Typ", value: station.batteryType, icon: HardDrive },
         { label: "Lebensdauer", value: `${station.cycleLife}+ Zyklen`, icon: RefreshCw },
+        { label: "Preis-Segment", value: getPriceLabel(station.priceApprox), icon: Banknote },
       ]
     },
     {
