@@ -12,8 +12,6 @@ const cspHeader = `
     connect-src 'self' vitals.vercel-insights.com judskbgaiwwixhkfgxmn.supabase.co;
     frame-ancestors 'none';
     upgrade-insecure-requests;
-    script-src 'self' 'unsafe-eval' 'unsafe-inline' va.vercel-scripts.com;
-    connect-src 'self' vitals.vercel-insights.com judskbgaiwwixhkfgxmn.supabase.co;
 `.replace(/\s{2,}/g, ' ').trim();
 
 const nextConfig: NextConfig = {
