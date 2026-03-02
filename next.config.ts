@@ -16,9 +16,22 @@ const cspHeader = `
 const nextConfig: NextConfig = {
   // 1. Bilder-Konfiguration (Cloudinary)
   images: {
-    loader: 'custom',
-    loaderFile: './lib/cloudinary-loader.ts',
+    remotePatterns: [
+    {
+      protocol: 'https',
+      hostname: 'res.cloudinary.com', // Altes Cloudinary
+    },
+    {
+      protocol: 'https',
+      hostname: 'judskbgaiwwixhkfgxmn.supabase.co', // Deine Supabase Domain
+      port: '',
+      pathname: '/storage/v1/object/public/**',
+    },
+  ],
   },
+  
+
+
   experimental: {
   optimizePackageImports: ['lucide-react'], // Fasst Icons effizienter zusammen
   },

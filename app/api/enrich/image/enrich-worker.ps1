@@ -33,33 +33,36 @@ foreach ($station in $todoList) {
     $id = $station.id
     $name = $station.name
     $brand = $station.brand.name
-    Write-Host "`n>>> Starte Enrichment fuer: $brand $name" -ForegroundColor White
+    $needed = $station.missingCount # Der Wert von der neuen API
 
-    # 1. Suche nach dem perfekten THUMBNAIL (Transparent/PNG)
-    $thumbQuery = "$brand $name powerstation official product transparent background png -sketch -vector -drawing -schematic"
-    $thumbRes = Invoke-RestMethod -Uri "https://google.serper.dev/images" -Method Post -Body (@{q=$thumbQuery; num=1} | ConvertTo-Json) -Headers $serperHeaders
-    $foundThumbnail = $thumbRes.images[0].imageUrl
+    Write-Host "`n>>> Enrichment fuer: $brand $name ($($station.currentCount)/5 Bildern)" -ForegroundColor White
+    Write-Host "    Benötige noch $needed Bilder..." -ForegroundColor Gray
 
-    # 2. Suche nach GALERIE-BILDERN (Details/Anschluesse)
-    $galleryQuery = "$brand $name powerstation ports connectors details -drawing -schematic -sketch -vector"
-    $galleryRes = Invoke-RestMethod -Uri "https://google.serper.dev/images" -Method Post -Body (@{q=$galleryQuery; num=5} | ConvertTo-Json) -Headers $serperHeaders
+    # 1. Nur wenn gar kein Thumbnail da ist (currentCount ist 0), suchen wir eines
+    $foundThumbnail = $null
+    if ($station.currentCount -eq 0) {
+        $thumbQuery = "$brand $name powerstation official product png"
+        $thumbRes = Invoke-RestMethod -Uri "https://google.serper.dev/images" -Method Post -Body (@{q=$thumbQuery; num=1} | ConvertTo-Json) -Headers $serperHeaders
+        $foundThumbnail = $thumbRes.images[0].imageUrl
+    }
+
+    # 2. Suche nach der EXAKTEN Anzahl fehlender Galerie-Bilder
+    $galleryQuery = "$brand $name powerstation features details"
+    $galleryRes = Invoke-RestMethod -Uri "https://google.serper.dev/images" -Method Post -Body (@{q=$galleryQuery; num=$needed} | ConvertTo-Json) -Headers $serperHeaders
+    
     $foundGallery = New-Object System.Collections.Generic.List[string]
     foreach($img in $galleryRes.images) { $foundGallery.Add($img.imageUrl) }
 
     # --- SERVER UPDATE ---
-    if ($foundThumbnail) {
-        $payload = @{ 
-            id = $id
-            thumbnailUrl = $foundThumbnail
-            galleryUrls = @($foundGallery) 
-        } | ConvertTo-Json -Depth 10
+    $payload = @{ 
+        id = $id
+        thumbnailUrl = $foundThumbnail
+        galleryUrls = @($foundGallery) 
+        append = $true # Ein Signal an die API: "Bitte hinzufügen, nicht löschen"
+    } | ConvertTo-Json -Depth 10
 
-        try {
-            Invoke-RestMethod -Uri "$serverUrl/api/enrich/image" -Method Post -Body $payload -Headers $authHeaders -ContentType "application/json"
-            Write-Host "    [SUCCESS] Thumbnail und $($foundGallery.Count) Galerie-Bilder gesendet." -ForegroundColor Green
-        } catch {
-            Write-Host "    [ERROR] Server-Fehler bei $name" -ForegroundColor Red
-        }
-    }
+    Invoke-RestMethod -Uri "$serverUrl/api/enrich/image" -Method Post -Body $payload -Headers $authHeaders -ContentType "application/json"
+    Write-Host "    [OK] $needed neue Bilder zur Warteschlange hinzugefügt." -ForegroundColor Green
+    
     Start-Sleep -Seconds 1
 }

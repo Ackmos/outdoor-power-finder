@@ -8,29 +8,28 @@ export async function GET(req: Request) {
   }
 
   try {
-    const todoList = await prisma.powerstation.findMany({
-      where: {
-        OR: [
-          { images: { equals: null } }, // Findet die echten NULL-Werte aus deinem Screenshot
-          { images: { isEmpty: true } } // Findet Einträge, die ein leeres Array [] haben
-        ]
-      },
+    // Wir laden alle Stationen und prüfen die Bild-Anzahl im Code
+    const allStations = await prisma.powerstation.findMany({
       select: {
         id: true,
         name: true,
         slug: true,
-        // Wichtig für die Cloudinary-Ordnerstruktur im Worker-Skript
-        brand: {
-          select: {
-            name: true
-          }
-        }
+        images: true, // Wir brauchen das Array zum Zählen
+        brand: { select: { name: true } }
       }
     });
 
+    // Filter: Nur Stationen mit weniger als 5 Bildern
+    const todoList = allStations
+      .map(s => ({
+        ...s,
+        currentCount: Array.isArray(s.images) ? s.images.length : 0,
+        missingCount: 5 - (Array.isArray(s.images) ? s.images.length : 0)
+      }))
+      .filter(s => s.missingCount > 0);
+
     return NextResponse.json(todoList);
   } catch (error: any) {
-    console.error("Fehler beim Abrufen der Todo-Liste:", error.message);
     return NextResponse.json({ error: 'Database error', details: error.message }, { status: 500 });
   }
 }

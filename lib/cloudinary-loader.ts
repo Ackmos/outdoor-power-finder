@@ -7,12 +7,15 @@ interface CloudinaryLoaderProps {
 }
 
 export default function cloudinaryLoader({ src, width, quality }: CloudinaryLoaderProps) {
-  // Wir nutzen deine Cloudinary-ID (Cloud Name)
-  const cloudName = 'dw8mkffls';
+  // ✅ FIX: Wenn die src bereits eine komplette URL ist (Supabase), 
+  // geben wir sie einfach direkt zurück.
+  if (src.startsWith('http')) {
+    return src;
+  }
 
+  const cloudName = 'dw8mkffls';
   const validatedWidth = width > 2000 ? 2000 : width;
   
-  // Parameter für Cloudinary: Format-Auto, Qualität-Auto, Breite, Padding und weißer Hintergrund
   const params = [
     'f_auto',
     'q_auto',
@@ -21,10 +24,7 @@ export default function cloudinaryLoader({ src, width, quality }: CloudinaryLoad
     'b_white'
   ].join(',');
 
-  // Sicherheit: Wir entfernen einen führenden Slash, falls vorhanden, 
-  // damit die URL nicht // bekommt
   const cleanSrc = src.startsWith('/') ? src.slice(1) : src;
 
-  // Die fertige URL, die direkt auf Cloudinary zeigt
   return `https://res.cloudinary.com/${cloudName}/image/upload/${params}/${cleanSrc}`;
 }

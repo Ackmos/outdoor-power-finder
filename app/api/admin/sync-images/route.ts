@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { supabase } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
-import cloudinary from "@/lib/cloudinary";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -13,79 +13,66 @@ export async function GET(req: Request) {
 
   try {
     const stations = await prisma.powerstation.findMany({
-      include: { brand: true },
+      include: { brand: true }
     });
 
+    
+
     const results = [];
-    const normalize = (path: string) => (path || "").replace(/^\/+|\/+$/g, "").toLowerCase();
 
     for (const station of stations) {
-      try {
-        const brandSlug = station.brand?.name.toLowerCase().replace(/\s+/g, '-') || 'unknown';
-        const stationSlug = station.name.toLowerCase().replace(/\s+/g, '-');
-        
-        const mainFolderPath = `powerstations/${brandSlug}/${stationSlug}`;
-        const thumbnailFolderPath = `${mainFolderPath}/thumbnail`;
-        const normalizedMain = normalize(mainFolderPath);
+      const brandSlug = station.brand?.name.toLowerCase().replace(/\s+/g, '-') || 'unknown';
+      const modelSlug = (station.slug || station.name.toLowerCase()).replace(/\s+/g, '-');
+      
+      const folderPath = `${brandSlug}/${modelSlug}`;
 
-        const searchResponse = await cloudinary.search
-          .expression(`folder:"${mainFolderPath}" OR folder:"${thumbnailFolderPath}"`)
-          .sort_by('public_id', 'asc')
-          .max_results(100)
-          .execute();
+      // 1. Dateien im Hauptordner (Galerie) abrufen
+      const { data: mainFiles } = await supabase.storage
+      .from('powerstations')
+      .list(folderPath, { sortBy: { column: 'name', order: 'asc' } });
+      // 2. Dateien im Thumbnail-Unterordner abrufen
+      const { data: thumbFiles } = await supabase.storage
+        .from('powerstations')
+        .list(`${folderPath}/thumbnail`);
 
-        const allResources = searchResponse.resources || [];
+      // 3. URLs generieren
+      const galleryUrls = (mainFiles || [])
+      .filter(f => f.name !== ".emptyKeepFile") // Systemdateien ignorieren
+      .filter(f => f.name !== "thumbnail")      // 🚀 WICHTIG: Den Thumbnail-ORDNER ignorieren!
+      .filter(f => f.metadata)                  // Nur Einträge mit Metadaten sind echte Dateien
+      .map(f => supabase.storage.from('powerstations').getPublicUrl(`${folderPath}/${f.name}`).data.publicUrl);
 
-        const processedResources = allResources.map((r: any) => {
-          const parts = r.public_id.split('/');
-          const derivedFolder = parts.slice(0, -1).join('/');
-          return {
-            ...r,
-            calculatedFolder: normalize(derivedFolder)
-          };
-        });
+      const thumbnailUrl = (thumbFiles && thumbFiles.length > 0)
+      ? supabase.storage.from('powerstations').getPublicUrl(`${folderPath}/thumbnail/${thumbFiles[0].name}`).data.publicUrl
+      : (galleryUrls[0] || null);
 
-        // ✅ ÄNDERUNG: Wir speichern nun die public_id statt der secure_url
-        const galleryIds = processedResources
-          .filter((r: any) => r.calculatedFolder === normalizedMain)
-          .map((r: any) => r.public_id);
+      // Ergänzung für dein Sync-Skript, um das Array zu säubern:
+      const cleanedImages = galleryUrls.filter(url => !url.endsWith('/thumbnail'));
 
-        // ✅ ÄNDERUNG: Auch beim Thumbnail nehmen wir die public_id
-        const thumbResource = processedResources.find((r: any) => 
-          r.calculatedFolder.endsWith('thumbnail')
-        );
-
-        let finalThumbnailId = thumbResource ? thumbResource.public_id : null;
-        let usedFallback = false;
-
-        if (!finalThumbnailId && galleryIds.length > 0) {
-          finalThumbnailId = galleryIds[0];
-          usedFallback = true;
+      await prisma.powerstation.update({
+        where: { id: station.id },
+        data: {
+          images: { set: cleanedImages }, // Setzt das Array ohne den Ordner-Pfad neu
+          thumbnailUrl: thumbnailUrl      // thumbnailUrl ist ja laut dir bereits korrekt
         }
+      });
 
-        // Datenbank Update mit den IDs
-        await prisma.powerstation.update({
-          where: { id: station.id },
-          data: {
-            thumbnailUrl: finalThumbnailId, // Speichert jetzt z.B. "powerstations/anker/..."
-            images: { set: galleryIds },
-          }
-        });
+      // 4. Datenbank Update mit Prisma
+      await prisma.powerstation.update({
+        where: { id: station.id },
+        data: {
+          images: { set: galleryUrls },
+          thumbnailUrl: thumbnailUrl
+        }
+      });
 
-        console.log(`[SYNC] ${station.name}: Galerie=${galleryIds.length} | Thumbnail=${finalThumbnailId ? (usedFallback ? "Fallback ✅" : "ID ✅") : "❌"}`);
-
-        results.push({ name: station.name, galleryCount: galleryIds.length });
-
-      } catch (stationError: any) {
-        console.error(`❌ [ERROR] ${station.name}:`, stationError);
-        results.push({ name: station.name, error: stationError?.message });
-      }
+      results.push({ name: station.name, images: galleryUrls.length });
     }
 
     revalidatePath("/");
-    return NextResponse.json({ message: "Sync mit Public IDs abgeschlossen", details: results });
+    return NextResponse.json({ message: "Supabase Sync abgeschlossen", details: results });
 
   } catch (error: any) {
-    return NextResponse.json({ error: "Kritischer Fehler" }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
