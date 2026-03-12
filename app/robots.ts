@@ -1,3 +1,4 @@
+// src/app/robots.ts
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
@@ -5,8 +6,13 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: '/api/', // Verhindert, dass interne APIs gescannt werden
+      disallow: [
+        '/api/',              // Schützt deine internen API-Endpunkte
+        '/admin/',            // Schützt den Admin-Bereich (falls vorhanden)
+        '/vergleich/*-vs-*',  // 🚀 BLOCKIERT die Thin-Content Vergleichspaare
+      ],
     },
-    sitemap: 'https://www.powerstation-finder.de//sitemap.xml', // Pfad zu deiner Sitemap
+    // Fix: Wir entfernen den doppelten Slash und passen die URL an dein sitemap.ts an
+    sitemap: 'https://powerstation-finder.de/sitemap.xml', 
   };
 }

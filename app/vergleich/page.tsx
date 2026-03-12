@@ -16,6 +16,10 @@ export const metadata: Metadata = {
     description: 'Finde die passende Powerstation durch direkten Vergleich der technischen Spezifikationen.',
     type: 'website',
   },
+  robots: {
+    index: false,
+    follow: true,
+  },
 }
 
 export default async function ComparisonHubPage() {
