@@ -16,6 +16,7 @@ export function Navbar() {
           <Link href="/camping" className="hover:text-black transition">Camping</Link>
           <Link href="/notstrom" className="hover:text-black transition">Notstrom</Link>
           <Link href="/vergleich" className="hover:text-black transition">Vergleich</Link>
+          <Link href="/laufzeit-rechner" className="hover:text-black transition">Laufzeit Rechner</Link>
         </nav>
 
       </div>

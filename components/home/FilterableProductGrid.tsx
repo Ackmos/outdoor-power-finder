@@ -26,6 +26,14 @@ export function FilterableProductGrid({ initialStations, brands }: any) {
   const searchParams = useSearchParams();
   const [showFilters, setShowFilters] = useState(false);
 
+  const BRAND_PRIORITY: Record<string, number> = {
+    "EcoFlow": 100,
+    "Jackery": 95,
+    "Bluetti": 90,
+    "Anker": 85,
+    "Goal Zero": 80
+  };
+
   // 1. Dynamische Grenzwerte aus den echten DB-Daten ermitteln
   const stats = useMemo(() => ({
     maxWh: Math.max(...initialStations.map((s: any) => s.capacityWh || 0), 3000),
@@ -47,25 +55,43 @@ export function FilterableProductGrid({ initialStations, brands }: any) {
   };
 
   // 3. Filter-Logik
-  const filteredStations = useMemo(() => {
-    return initialStations.filter((s: any) => {
-      const price = s.priceApprox || 0;
-      let matchPrice = true;
-      
-      if (filters.priceSegment === "Einsteiger") matchPrice = price < 500;
-      else if (filters.priceSegment === "Mittelklasse") matchPrice = price >= 500 && price <= 1500;
-      else if (filters.priceSegment === "Premium") matchPrice = price > 1500;
+const filteredStations = useMemo(() => {
+  // Zuerst filtern wir wie bisher
+  const filtered = initialStations.filter((s: any) => {
+    const price = s.priceApprox || 0;
+    let matchPrice = true;
+    
+    if (filters.priceSegment === "Einsteiger") matchPrice = price < 500;
+    else if (filters.priceSegment === "Mittelklasse") matchPrice = price >= 500 && price <= 1500;
+    else if (filters.priceSegment === "Premium") matchPrice = price > 1500;
 
-      const matchBrand = filters.brand === "Alle" || s.brand.name === filters.brand;
-      const matchWh = s.capacityWh >= filters.minWh;
-      const matchOutput = s.outputWatts >= filters.minOutput;
-      const matchCycles = s.cycleLife >= filters.minCycles;
-      const matchWeight = s.weightKg <= filters.maxWeight;
-      const matchCharge = s.chargeTimeAcMin <= filters.maxChargeTime;
-      const matchPorts = s.portsAc >= filters.minAcPorts;
-      return matchBrand && matchPrice && matchWh && matchOutput && matchCycles && matchWeight && matchCharge && matchPorts;
-    });
-  }, [initialStations, filters]);
+    const matchBrand = filters.brand === "Alle" || s.brand.name === filters.brand;
+    const matchWh = s.capacityWh >= filters.minWh;
+    const matchOutput = s.outputWatts >= filters.minOutput;
+    const matchCycles = s.cycleLife >= filters.minCycles;
+    const matchWeight = s.weightKg <= filters.maxWeight;
+    const matchCharge = s.chargeTimeAcMin <= filters.maxChargeTime;
+    const matchPorts = s.portsAc >= filters.minAcPorts;
+    
+    return matchBrand && matchPrice && matchWh && matchOutput && matchCycles && matchWeight && matchCharge && matchPorts;
+  });
+
+  // JETZT: Die strategische Sortierung anwenden
+  return filtered.sort((a: any, b: any) => {
+    // A. Priorität nach Marke (High Trust zuerst)
+    const priorityA = BRAND_PRIORITY[a.brand.name] || 0;
+    const priorityB = BRAND_PRIORITY[b.brand.name] || 0;
+    
+    if (priorityA !== priorityB) {
+      return priorityB - priorityA;
+    }
+
+    // B. Preis-Attraktivität (Wir wollen keine Billigheimer ganz oben, aber auch keine 5000€ Monster)
+    // Wir sortieren innerhalb der Marken-Priorität absteigend nach Preis, 
+    // um die "wertigeren" Produkte zuerst zu zeigen.
+    return (b.priceApprox || 0) - (a.priceApprox || 0);
+  });
+}, [initialStations, filters]);
 
   // 4. Pagination Logik
   const currentPage = Number(searchParams.get("page")) || 1;

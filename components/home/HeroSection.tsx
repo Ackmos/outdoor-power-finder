@@ -26,14 +26,7 @@ export function HeroSection() {
           Egal ob Camping, Home-Office oder Notstrom-Backup.
         </p>
         
-        <div className="flex flex-wrap justify-center gap-4">
-          <Button size="lg" className="rounded-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-8">
-            Zum Laufzeit-Rechner
-          </Button>
-          <Button size="lg" variant="outline" className="rounded-full border-stone-700 text-black hover:bg-stone-800 hover:text-white px-8">
-            Bestenliste ansehen
-          </Button>
-        </div>
+
       </div>
     </section>
   );
